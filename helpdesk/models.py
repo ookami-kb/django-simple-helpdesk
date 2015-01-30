@@ -97,7 +97,7 @@ class Ticket(models.Model):
         return reverse('helpdesk_ticket', args=[self.pk])
 
     def get_full_url(self):
-        return ''.join(['http://', get_current_site(None).domain, self.get_absolute_url()])
+        return ''.join([SETTINGS['host'], self.get_absolute_url()])
 
     def __unicode__(self):
         return u'HD-%d %s' % (self.pk, self.title)
