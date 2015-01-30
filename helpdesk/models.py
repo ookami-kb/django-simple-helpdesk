@@ -1,7 +1,6 @@
 # -*- encoding: utf-8 -*-
 
 from django.contrib.auth.models import User
-from django.contrib.sites.models import get_current_site
 from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
 from django.db import models
