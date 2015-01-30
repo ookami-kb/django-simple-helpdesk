@@ -1,0 +1,2 @@
+recursive-include helpdesk/static *
+recursive-include helpdesk/templates *

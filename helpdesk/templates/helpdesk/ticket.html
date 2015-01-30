@@ -1,0 +1,86 @@
+{% extends 'helpdesk/base.html' %}
+{% load helpdesk %}
+{% load bootstrap3 %}
+{% load widget_tweaks %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-xs-8">
+            <h2>{{ object.title }}</h2>
+
+            <div class="well">
+                <div class="text-muted text-right">
+                    <small>Created: {{ object.created|date:"d.m.Y H:i:s" }}</small>
+                </div>
+                <iframe src="{% url 'email' object.pk %}" frameborder="none" width="100%" height="300px" sandbox>
+                </iframe>
+            </div>
+
+            {% for comment in comments %}
+                {% include 'helpdesk/comment.html' %}
+            {% endfor %}
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Add answer</h3>
+                </div>
+                <div class="panel-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {% bootstrap_form reply_form %}
+                        {% bootstrap_button 'Submit' button_type='submit' name='reply' %}
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-4">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Ticket info</h3>
+                </div>
+                <div class="panel-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <table class="table table-info">
+                            <tr>
+                                <th class="text-right">Assignee:</th>
+                                <td>{{ ticket_form.assignee|add_class:"form-control" }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-right">Project:</th>
+                                <td>{{ ticket_form.project|add_class:"form-control" }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-right">Priority:</th>
+                                <td>{{ ticket_form.priority|add_class:"form-control" }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-right">State:</th>
+                                <td>{{ ticket_form.state|add_class:"form-control" }}</td>
+                            </tr>
+                            {% if perms.helpdesk.view_customer %}
+                                <tr>
+                                    <th class="text-right">Customer:</th>
+                                    <td>{{ object.customer }}</td>
+                                </tr>
+                            {% endif %}
+                        </table>
+
+                        <div class="text-center">
+                            {% bootstrap_button 'Update' button_type='submit' name='ticket' %}
+                        </div>
+                    </form>
+
+                    <ul class="history-list">
+                        {% for action in history %}
+                            <li>
+                                <p>{{ action.created|date:"d.m.Y H:i:s" }} by {% me_or_user action.user %}:</p>
+                                {{ action.change|safe|linebreaks }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

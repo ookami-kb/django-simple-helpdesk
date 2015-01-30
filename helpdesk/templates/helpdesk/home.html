@@ -1,0 +1,63 @@
+{% extends 'helpdesk/base.html' %}
+{% load helpdesk %}
+{% load bootstrap3 %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-4 col-sm-push-8">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Filters</h3>
+                </div>
+                <div class="panel-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {% bootstrap_form filter_form %}
+                        {% bootstrap_button 'Apply' button_type='submit' %}
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8 col-sm-pull-4">
+            <div class="list-group">
+                {% for ticket in object_list %}
+                    <div class="list-group-item">
+                        <div class="row-action-primary">
+                            <i class="mdi-file-folder"></i>
+                        </div>
+                        <div class="row-content">
+                            <h4 class="list-group-item-heading single-line">
+                                <a href="{{ ticket.get_absolute_url }}"
+                                   title="{{ ticket.title }}">HD-{{ ticket.pk }} {{ ticket.title }}</a>
+                            </h4>
+
+                            <div class="list-group-item-text">
+                                <div class="row">
+                                    <div class="col-xs-2">
+                                        {{ ticket.priority_label }}
+                                    </div>
+                                    <div class="col-xs-2">
+                                        {{ ticket.state.label }}
+                                    </div>
+                                    <div class="col-xs-2">
+                                        <span class="label"
+                                              title="Updated">{{ ticket.updated|date:"d.m.Y H:i:s" }}</span>
+                                    </div>
+                                    <div class="col-xs-2">
+                                        <span class="label">{{ ticket.project|default:"" }}</span>
+                                    </div>
+                                    <div class="col-xs-2">
+                                        <span class="label {% if ticket.assignee == request.user %}label-success{% endif %}">
+                                            {% assignee ticket %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-group-separator"></div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,24 @@
+.table-info>tbody>tr:first-child>th,
+.table-info>tbody>tr:first-child>td {
+    border-top: none;
+}
+
+.label {
+    display: inline-block;
+}
+
+.single-line {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+}
+
+.history-list {
+    font-size: small;
+    color: #777;
+}
+
+.history-list li {
+    padding-bottom: 5px;
+}
