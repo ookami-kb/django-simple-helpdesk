@@ -94,7 +94,7 @@ class Ticket(models.Model):
         msg.send(fail_silently=True)
 
     def get_absolute_url(self):
-        return reverse('ticket', args=[self.pk])
+        return reverse('helpdesk_ticket', args=[self.pk])
 
     def get_full_url(self):
         return ''.join(['http://', get_current_site(None).domain, self.get_absolute_url()])

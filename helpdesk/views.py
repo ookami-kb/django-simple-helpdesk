@@ -34,7 +34,7 @@ class HomeView(ListView):
             self.filter.by_assignee(self.filter_form.cleaned_data['assignee'])
             self.filter.by_state(self.filter_form.cleaned_data['state'])
             self.filter.by_project(self.filter_form.cleaned_data['project'])
-            return HttpResponseRedirect(reverse('home'))
+            return HttpResponseRedirect(reverse('helpdesk_home'))
         return self.render_to_response(self.get_context_data())
 
     def get_queryset(self):
@@ -91,7 +91,7 @@ class TicketView(DetailView):
                 ticket=reply.ticket
             )
 
-            return HttpResponseRedirect(reverse('home'))
+            return HttpResponseRedirect(reverse('helpdesk_home'))
         elif 'ticket' in request.POST and self.ticket_form.is_valid():
             changes = []
             for fieldname in self.ticket_form.changed_data:
@@ -111,7 +111,7 @@ class TicketView(DetailView):
                                     changes=changes,
                                     ticket=self.object,
                                     updater=request.user)
-            return HttpResponseRedirect(reverse('home'))
+            return HttpResponseRedirect(reverse('helpdesk_home'))
         return self.render_to_response(self.get_context_data())
 
     def _get_display_value(self, fieldname):
