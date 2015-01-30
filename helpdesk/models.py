@@ -16,7 +16,7 @@ from helpdesk.signals import new_comment_from_client, ticket_updated, new_answer
 
 class Project(models.Model):
     machine_name = models.CharField(max_length=64, primary_key=True)
-    title = models.CharField(max_length=256)
+    title = models.CharField(max_length=255)
     email = models.EmailField()
     default_assignee = models.ForeignKey(User, blank=True, null=True)
 
@@ -57,14 +57,14 @@ class Ticket(models.Model):
         (1, u'Normal'),
         (2, u'High')
     )
-    title = models.CharField(max_length=256)
+    title = models.CharField(max_length=255)
     body = models.TextField()
     project = models.ForeignKey(Project, blank=True, null=True)
     state = models.ForeignKey(State, default='open')
     priority = models.IntegerField(choices=PRIORITIES, default=1)
     assignee = models.ForeignKey(User, blank=True, null=True, limit_choices_to={'groups__name': 'Helpdesk support'})
     customer = models.EmailField()
-    message_id = models.CharField(max_length=256, unique=True)
+    message_id = models.CharField(max_length=255, unique=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
