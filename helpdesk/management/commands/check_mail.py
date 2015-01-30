@@ -65,7 +65,8 @@ class Command(BaseCommand):
                     ticket=initial
                 )
 
-            imbox.mark_seen(uid)
+            if SETTINGS['mark_seen']:
+                imbox.mark_seen(uid)
 
     def handle(self, *args, **options):
         imbox = Imbox('imap.gmail.com',
