@@ -91,7 +91,8 @@ class Ticket(models.Model):
                            self.project.email if self.project else SETTINGS['from_email'],
                            [self.customer])
         msg.content_subtype = 'html'
-        msg.send(fail_silently=True)
+        msg.send(fail_silently=False)
+
 
     def get_absolute_url(self):
         return reverse('helpdesk_ticket', args=[self.pk])
@@ -128,7 +129,7 @@ class Comment(models.Model):
     body = models.TextField()
     author = models.ForeignKey(User, blank=True, null=True, related_name='helpdesk_answers')
     internal = models.BooleanField(default=False)
-    notified = models.BooleanField(default=False, editable=False)
+    notified = models.BooleanField(default=True, editable=False)
     message_id = models.CharField(max_length=256, blank=True, null=True)
 
     def is_from_client(self):
@@ -171,7 +172,11 @@ def on_new_answer(sender, ticket, answer, **kwargs):
 
     if not answer.internal:
         subject = u'Re: [HD-%d] %s' % (ticket.pk, ticket.title)
-        ticket.notify_customer(subject, 'helpdesk/customer_answer.html', answer=answer)
+        try:
+            ticket.notify_customer(subject, 'helpdesk/customer_answer.html', answer=answer)
+        except:
+            answer.notified = False
+            answer.save()
 
 
 class HistoryAction(models.Model):
