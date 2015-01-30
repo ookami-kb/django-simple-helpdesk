@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 from django.contrib.auth.models import User
+from django.contrib.sites.models import get_current_site
 from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -96,7 +97,7 @@ class Ticket(models.Model):
         return reverse('helpdesk_ticket', args=[self.pk])
 
     def get_full_url(self):
-        return ''.join([SETTINGS['host'], self.get_absolute_url()])
+        return ''.join([SETTINGS['host'] or 'http://' + get_current_site(None).domain, self.get_absolute_url()])
 
     def __unicode__(self):
         return u'HD-%d %s' % (self.pk, self.title)

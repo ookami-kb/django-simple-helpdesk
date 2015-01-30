@@ -1,12 +1,11 @@
 # -*- encoding: utf-8 -*-
 from django.conf import settings
-from django.contrib.sites.models import get_current_site
 
 HELPDESK_DEFAULTS = {
     'username': None,
     'password': None,
     'from_email': settings.DEFAULT_FROM_EMAIL,
-    'host': 'http://' + get_current_site(None).domain,
+    'host': None,
 }
 
 SETTINGS = HELPDESK_DEFAULTS.copy()
