@@ -1,4 +1,4 @@
-<div class="panel panel-{% if comment.is_from_client %}primary{% elif comment.internal %}default{% else %}info{% endif %}">
+<div class="panel panel-{% if not comment.notified %}danger{% elif comment.is_from_client %}primary{% elif comment.internal %}default{% else %}info{% endif %}">
     <div class="panel-heading">
         <h3 class="panel-title {% if comment.is_from_client %}text-right{% endif %}">
             {{ comment.created|date:"d.m.Y H:i" }}, {{ comment.author|default:"Client" }}</h3>
