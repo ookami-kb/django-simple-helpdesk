@@ -1,3 +1,4 @@
+{% load staticfiles %}
 <html>
 
 <head>
@@ -33,6 +34,9 @@
 <script src="{{ STATIC_URL }}helpdesk/js/material.min.js"></script>
 <script src="{{ STATIC_URL }}helpdesk/js/jquery.dropdown.js"></script>
 <script src="{{ STATIC_URL }}helpdesk/js/custom.js"></script>
+
+<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
 <script>
     $(document).ready(function () {
         $.material.init();

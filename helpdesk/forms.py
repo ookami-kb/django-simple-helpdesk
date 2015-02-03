@@ -1,16 +1,18 @@
 # -*- encoding: utf-8 -*-
+from ckeditor.fields import RichTextFormField
 from django import forms
-from django.forms.widgets import RadioChoiceInput
+
 from helpdesk.models import State, Comment, Ticket, Project
 
 
 class CommentForm(forms.ModelForm):
     state = forms.ModelChoiceField(State.objects.all(), widget=forms.RadioSelect, initial='resolved')
+    body = RichTextFormField()
 
     def __init__(self, *args, **kwargs):
         super(CommentForm, self).__init__(*args, **kwargs)
-        self.fields['body'].label = u'Answer body'
         self.fields['body'].widget.attrs['placeholder'] = u'Enter your answer here'
+        self.fields['body'].label = u'Answer body'
 
     class Meta:
         model = Comment

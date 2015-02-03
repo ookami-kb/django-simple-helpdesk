@@ -1,4 +1,4 @@
-{{ answer.body|linebreaks }}
+{{ answer.body|safe }}
 
 <hr>
 {% if signature %}{{ signature|urlize|linebreaks }}{% endif %}

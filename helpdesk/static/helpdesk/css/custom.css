@@ -22,3 +22,7 @@
 .history-list li {
     padding-bottom: 5px;
 }
+
+.django-ckeditor-widget {
+    width: 100%;
+}
