@@ -6,21 +6,23 @@
 {% block content %}
     <div class="row">
         <div class="col-xs-8">
-            <h2>{{ object.title }}</h2>
+            <h2>HD-{{ object.pk }}: {{ object.title }}</h2>
 
-            <div class="well">
-                <div class="text-muted text-right">
-                    <small>Created: {{ object.created|date:"d.m.Y H:i:s" }}</small>
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-right">{{ object.created|date:"d.m.Y H:i:s" }}</h3>
                 </div>
-                <iframe src="{% url 'helpdesk_email' object.pk %}" frameborder="none" width="100%" height="300px" sandbox>
-                </iframe>
+                <div class="panel-body">
+                    <iframe src="{% url 'helpdesk_email' object.pk %}" frameborder="none"
+                        width="100%" height="300px" sandbox></iframe>
+                </div>
             </div>
 
             {% for comment in comments %}
                 {% include 'helpdesk/comment.html' %}
             {% endfor %}
 
-            <div class="panel panel-default">
+            <div class="panel panel-info" id="answer-panel">
                 <div class="panel-heading">
                     <h3 class="panel-title">Add answer</h3>
                 </div>
