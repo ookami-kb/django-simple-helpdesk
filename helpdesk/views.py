@@ -20,6 +20,7 @@ class HomeView(ListView):
     template_name = 'helpdesk/home.html'
     filter_form = None
     filter = None
+    paginate_by = 20
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
