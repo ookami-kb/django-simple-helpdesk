@@ -8,7 +8,7 @@
             <iframe src="{% url 'helpdesk_comment_email' comment.pk %}"
                     frameborder="none" width="100%" height="300px" sandbox></iframe>
         {% else %}
-            {{ comment.body|linebreaks }}
+            {{ comment.body|safe }}
         {% endif %}
     </div>
 </div>

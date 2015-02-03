@@ -11,7 +11,8 @@ from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
 from helpdesk import SETTINGS
-from helpdesk.signals import new_comment_from_client, ticket_updated, new_answer
+from helpdesk.signals import new_comment_from_client, ticket_updated, new_answer, ticket_pre_created, \
+    ticket_post_created
 
 
 class Project(models.Model):
@@ -68,6 +69,15 @@ class Ticket(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
+    @staticmethod
+    def create(**kwargs):
+        author = kwargs.pop('author', None)
+        ticket = Ticket(**kwargs)
+        ticket_pre_created.send(sender=Ticket, sent_from=ticket.customer, ticket=ticket, author=author)
+        ticket.save()
+        ticket_post_created.send(sender=Ticket, instance=ticket, author=author)
+        return ticket
+
     def notify_assignee(self, subject, template, **kwargs):
         if self.assignee is None:
             return
@@ -92,7 +102,6 @@ class Ticket(models.Model):
                            [self.customer])
         msg.content_subtype = 'html'
         msg.send(fail_silently=False)
-
 
     def get_absolute_url(self):
         return reverse('helpdesk_ticket', args=[self.pk])
@@ -147,10 +156,11 @@ def on_comment_inserted(sender, **kwargs):
         new_comment_from_client.send(sender=sender, comment=comment, ticket=comment.ticket)
 
 
-@receiver(post_save, sender=Ticket, dispatch_uid='on_ticket_save')
+@receiver(ticket_post_created, sender=Ticket, dispatch_uid='on_ticket_save')
 def on_ticket_save(sender, **kwargs):
-    if kwargs['created']:
-        kwargs['instance'].notify_assignee(u'Ticket created', 'helpdesk/ticket_created.html')
+    ticket = kwargs['instance']
+    if kwargs.get('author', None) != ticket.assignee:
+        ticket.notify_assignee(u'Ticket created', 'helpdesk/ticket_created.html')
 
 
 @receiver(ticket_updated, dispatch_uid='on_ticket_update')

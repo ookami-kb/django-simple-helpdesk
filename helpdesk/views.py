@@ -2,10 +2,12 @@
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
-from django.views.generic import TemplateView, ListView, DetailView, View
+from django.utils.timezone import now
+from django.views.generic import TemplateView, ListView, DetailView, View, CreateView
+import time
 
 from helpdesk import Filter
-from helpdesk.forms import CommentForm, TicketForm, FilterForm
+from helpdesk.forms import CommentForm, TicketForm, FilterForm, TicketCreateForm
 from helpdesk.models import Ticket, HistoryAction, Comment
 from helpdesk.signals import new_answer, ticket_updated
 
@@ -43,6 +45,23 @@ class HomeView(ListView):
         if filters:
             queryset = queryset.filter(**filters)
         return queryset.order_by('-updated')
+
+
+class TicketCreateView(CreateView):
+    model = Ticket
+    template_name = 'helpdesk/ticket_create.html'
+    form_class = TicketCreateForm
+
+    def form_valid(self, form):
+        data = form.cleaned_data
+        comment = data.pop('comment')
+        ticket = Ticket.create(body=u'This ticket was created by [user:%d]' % self.request.user.pk,
+                               message_id=u'ticket-%d' % time.mktime(now().timetuple()),
+                               author=self.request.user,
+                               **data)
+        reply = Comment.objects.create(ticket=ticket, body=comment, author=self.request.user)
+        new_answer.send(sender=Comment, ticket=ticket, answer=reply)
+        return HttpResponseRedirect(reverse('helpdesk_home'))
 
 
 class EmailView(View):

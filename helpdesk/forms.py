@@ -39,3 +39,11 @@ class FilterForm(forms.Form):
     assignee = forms.ChoiceField(choices=ASSIGNEES)
     state = forms.ModelChoiceField(State.objects.all(), required=False, empty_label=u'All')
     project = forms.ModelChoiceField(Project.objects.all(), required=False, empty_label=u'All')
+
+
+class TicketCreateForm(forms.ModelForm):
+    comment = RichTextFormField()
+
+    class Meta:
+        model = Ticket
+        fields = ['title', 'assignee', 'priority', 'project', 'state', 'customer', 'comment']

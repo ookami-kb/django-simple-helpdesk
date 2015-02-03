@@ -4,10 +4,10 @@ import re
 
 from django.core.management import BaseCommand
 from imbox import Imbox
-from helpdesk import SETTINGS
 
+from helpdesk import SETTINGS
 from helpdesk.models import Ticket, Comment, Project
-from helpdesk.signals import ticket_pre_created
+
 
 logger = logging.getLogger('helpdesk.mail')
 
@@ -52,7 +52,7 @@ class Command(BaseCommand):
                 initial = self._get_initial_issue(message)
 
                 if initial is None:
-                    ticket = Ticket(
+                    Ticket.create(
                         title=subject,
                         body=body,
                         customer=message.sent_from[0]['email'],
@@ -60,8 +60,6 @@ class Command(BaseCommand):
                         assignee=project.default_assignee,
                         project=project
                     )
-                    ticket_pre_created.send(sender=Ticket, sent_from=message.sent_from[0]['email'], ticket=ticket)
-                    ticket.save()
                     logger.info(u'  Created new ticket')
                 else:
                     Comment.objects.create(

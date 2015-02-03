@@ -1,0 +1,16 @@
+{% extends 'helpdesk/base.html' %}
+{% load bootstrap3 %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-xs-12">
+            <h2>Create new ticket</h2>
+
+            <form method="post">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                {% bootstrap_button 'Submit' button_type='submit' %}
+            </form>
+        </div>
+    </div>
+{% endblock %}
