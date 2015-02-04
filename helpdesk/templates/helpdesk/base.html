@@ -23,14 +23,14 @@
             <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="{% url 'helpdesk_home' %}">HelpDesk</a>
+    </div>
 
-        <div class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-                {% if perms.helpdesk.create_ticket %}
-                    <li><a href="{% url 'helpdesk_ticket_create' %}">Create ticket</a></li>
-                {% endif %}
-            </ul>
-        </div>
+    <div class="navbar-collapse collapse navbar-responsive-collapse">
+        <ul class="nav navbar-nav">
+            {% if perms.helpdesk.create_ticket %}
+                <li><a href="{% url 'helpdesk_ticket_create' %}">Create ticket</a></li>
+            {% endif %}
+        </ul>
     </div>
 </div>
 
