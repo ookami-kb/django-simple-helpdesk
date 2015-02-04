@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 import logging
 import re
+from django.core.files.base import ContentFile
 
 from django.core.management import BaseCommand
 from imbox import Imbox
@@ -52,7 +53,7 @@ class Command(BaseCommand):
                 initial = self._get_initial_issue(message)
 
                 if initial is None:
-                    Ticket.create(
+                    ticket = Ticket.create(
                         title=subject,
                         body=body,
                         customer=message.sent_from[0]['email'],
@@ -61,6 +62,9 @@ class Command(BaseCommand):
                         project=project
                     )
                     logger.info(u'  Created new ticket')
+                    for attachment in message.attachments:
+                        f = ContentFile(attachment['content'].read(), name=attachment['filename'])
+                        ticket.ticketattachment_set.create(attachment=f)
                 else:
                     Comment.objects.create(
                         body=body,

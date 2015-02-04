@@ -2,6 +2,9 @@
 <html>
 
 <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}helpdesk/css/ripples.min.css" rel="stylesheet">
@@ -21,11 +24,13 @@
         </button>
         <a class="navbar-brand" href="{% url 'helpdesk_home' %}">HelpDesk</a>
 
-        <ul class="nav navbar-nav">
-            {% if perms.helpdesk.create_ticket %}
-                <li><a href="{% url 'helpdesk_ticket_create' %}">Create ticket</a></li>
-            {% endif %}
-        </ul>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                {% if perms.helpdesk.create_ticket %}
+                    <li><a href="{% url 'helpdesk_ticket_create' %}">Create ticket</a></li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
 </div>
 

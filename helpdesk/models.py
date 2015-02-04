@@ -132,6 +132,11 @@ class Ticket(models.Model):
         )
 
 
+class TicketAttachment(models.Model):
+    ticket = models.ForeignKey(Ticket)
+    attachment = models.FileField(upload_to='tickets')
+
+
 class Comment(models.Model):
     ticket = models.ForeignKey(Ticket)
     created = models.DateTimeField(auto_now_add=True)
