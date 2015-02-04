@@ -1,15 +1,18 @@
 # -*- encoding: utf-8 -*-
 from django.contrib import admin
-from helpdesk.models import Ticket, Project, State, Comment, HelpdeskProfile, TicketAttachment
+from django.contrib.contenttypes.generic import GenericTabularInline
+
+from helpdesk.models import Ticket, Project, State, Comment, HelpdeskProfile, MailAttachment
 
 
-class TicketAttachmentInline(admin.TabularInline):
-    model = TicketAttachment
+class AttachmentInline(GenericTabularInline):
+    model = MailAttachment
+
 
 class TicketAdmin(admin.ModelAdmin):
     list_display = ('title', 'project', 'state', 'priority', 'assignee')
     readonly_fields = ('created', 'updated')
-    inlines = [TicketAttachmentInline]
+    inlines = [AttachmentInline]
 
 
 class ProjectAdmin(admin.ModelAdmin):

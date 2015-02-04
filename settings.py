@@ -37,10 +37,12 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'south',
     'helpdesk',
     'bootstrap3',
     'widget_tweaks',
+    'ckeditor',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -52,7 +54,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'helpdesk.urls'
+ROOT_URLCONF = 'urls'
 
 WSGI_APPLICATION = 'wsgi.application'
 
@@ -100,3 +102,45 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
 )
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(pathname)s:%(lineno)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(asctime)s %(message)s'
+        },
+    },
+    'handlers': {
+        'helpdesk': {
+            'filename': BASE_DIR + '/helpdesk.log',
+            'class': 'logging.FileHandler',
+            'level': 'INFO',
+            'formatter': 'simple',
+        }
+    },
+    'loggers': {
+        'helpdesk.mail': {
+            'handlers': ['helpdesk'],
+            'level': 'INFO',
+        }
+    },
+}
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CKEDITOR_UPLOAD_PATH = MEDIA_ROOT + '/ckeditor/'
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': [
+            ['Source', '-', 'Bold', 'Italic', '-', 'NumberedList', 'BulletedList', '-', 'RemoveFormat'],
+            ['Cut', 'Copy', 'Paste', 'PasteText', '-', 'Undo', 'Redo']
+        ],
+        'height': 300,
+        'width': '100%',
+    },
+}
+
+SITE_ID = 1

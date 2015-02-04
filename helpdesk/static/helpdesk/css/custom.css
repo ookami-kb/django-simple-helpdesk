@@ -26,3 +26,7 @@
 .django-ckeditor-widget {
     width: 100%;
 }
+
+.help-block {
+    font-size: smaller;
+}

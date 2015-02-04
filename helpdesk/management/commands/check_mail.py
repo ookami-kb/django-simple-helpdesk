@@ -1,13 +1,13 @@
 # -*- encoding: utf-8 -*-
 import logging
 import re
-from django.core.files.base import ContentFile
 
+from django.core.files.base import ContentFile
 from django.core.management import BaseCommand
 from imbox import Imbox
 
 from helpdesk import SETTINGS
-from helpdesk.models import Ticket, Comment, Project
+from helpdesk.models import Ticket, Comment, Project, MailAttachment
 
 
 logger = logging.getLogger('helpdesk.mail')
@@ -62,16 +62,15 @@ class Command(BaseCommand):
                         project=project
                     )
                     logger.info(u'  Created new ticket')
-                    for attachment in message.attachments:
-                        f = ContentFile(attachment['content'].read(), name=attachment['filename'])
-                        ticket.ticketattachment_set.create(attachment=f)
+                    self._create_attachments(message.attachments, ticket)
                 else:
-                    Comment.objects.create(
+                    comment = Comment.objects.create(
                         body=body,
                         author=None,
                         message_id=uid,
                         ticket=initial
                     )
+                    self._create_attachments(message.attachments, comment)
                     logger.info(u'  Added comment to ticket')
 
                 if SETTINGS['mark_seen']:
@@ -89,3 +88,11 @@ class Command(BaseCommand):
             self.handle_messages(imbox, project)
 
         imbox.logout()
+
+    def _create_attachments(self, attachments, obj):
+        for attachment in attachments:
+            f = ContentFile(attachment['content'].read(), name=attachment['filename'])
+            mail_attachment = MailAttachment(
+                attachment=f, content_object=obj
+            )
+            mail_attachment.save()

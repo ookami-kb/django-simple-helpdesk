@@ -10,5 +10,13 @@
         {% else %}
             {{ comment.body|safe }}
         {% endif %}
+
+        <ol>
+            {% for attachment in comment.attachments.all %}
+                <li><a href="{{ attachment.attachment.url }}">{{ attachment.filename }}</a>
+                    ({{ attachment.attachment.size|filesizeformat }})
+                </li>
+            {% endfor %}
+        </ol>
     </div>
 </div>

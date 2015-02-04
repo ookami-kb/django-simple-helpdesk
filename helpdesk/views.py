@@ -1,14 +1,17 @@
 # -*- encoding: utf-8 -*-
+from mimetypes import guess_type
+import time
+
+from django.contrib.contenttypes.generic import generic_inlineformset_factory
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
 from django.views.generic import TemplateView, ListView, DetailView, View, CreateView
-import time
 
 from helpdesk import Filter
 from helpdesk.forms import CommentForm, TicketForm, FilterForm, TicketCreateForm
-from helpdesk.models import Ticket, HistoryAction, Comment
+from helpdesk.models import Ticket, HistoryAction, Comment, MailAttachment
 from helpdesk.signals import new_answer, ticket_updated
 
 
@@ -48,12 +51,22 @@ class HomeView(ListView):
         return queryset.order_by('-updated')
 
 
+AttachmentFormset = generic_inlineformset_factory(MailAttachment, can_delete=False, extra=3)
+
+
 class TicketCreateView(CreateView):
     model = Ticket
     template_name = 'helpdesk/ticket_create.html'
     form_class = TicketCreateForm
+    attachment_formset = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.attachment_formset = AttachmentFormset(data=request.POST or None, files=request.FILES or None)
+        return super(TicketCreateView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
+        if not self.attachment_formset.is_valid():
+            return self.render_to_response(self.get_context_data())
         data = form.cleaned_data
         comment = data.pop('comment')
         ticket = Ticket.create(body=u'This ticket was created by [user:%d]' % self.request.user.pk,
@@ -61,8 +74,17 @@ class TicketCreateView(CreateView):
                                author=self.request.user,
                                **data)
         reply = Comment.objects.create(ticket=ticket, body=comment, author=self.request.user)
+
+        self.attachment_formset.instance = reply
+        self.attachment_formset.save()
+
         new_answer.send(sender=Comment, ticket=ticket, answer=reply)
         return HttpResponseRedirect(reverse('helpdesk_home'))
+
+    def get_context_data(self, **kwargs):
+        context = super(TicketCreateView, self).get_context_data(**kwargs)
+        context['attachment_formset'] = self.attachment_formset
+        return context
 
 
 class EmailView(View):
@@ -82,22 +104,28 @@ class TicketView(DetailView):
     model = Ticket
     reply_form = None
     ticket_form = None
+    attachment_formset = None
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
         self.reply_form = CommentForm(request.POST or None if 'reply' in request.POST else None)
         self.ticket_form = TicketForm(request.POST or None if 'ticket' in request.POST else None,
                                       instance=self.object)
+        self.attachment_formset = AttachmentFormset(data=request.POST or None if 'reply' in request.POST else None,
+                                                    files=request.FILES or None)
         return super(TicketView, self).dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         ticket = self.get_object()
         self.object = ticket
-        if 'reply' in request.POST and self.reply_form.is_valid():
+        if 'reply' in request.POST and self.reply_form.is_valid() and self.attachment_formset.is_valid():
             reply = self.reply_form.save(commit=False)
             reply.author = request.user
             reply.ticket = ticket
             reply.save()
+
+            self.attachment_formset.instance = reply
+            self.attachment_formset.save()
 
             ticket.state = self.reply_form.cleaned_data['state']
             ticket.save()
@@ -149,5 +177,18 @@ class TicketView(DetailView):
         context['reply_form'] = self.reply_form
         context['ticket_form'] = self.ticket_form
         context['history'] = self.object.historyaction_set.all().order_by('-created')
+        context['attachments'] = self.object.attachments.all()
+        context['attachment_formset'] = self.attachment_formset
         return context
 
+
+class AttachmentView(View):
+    def dispatch(self, request, *args, **kwargs):
+        a = MailAttachment(attachment=kwargs['name'])
+        attachment = a.attachment
+        response = HttpResponse()
+        response['X-Sendfile'] = attachment.path
+        # response['Content-Length'] = attachment.size
+        response['Content-Type'] = guess_type(attachment.name.split('/')[-1])[0]
+        response['Content-Disposition'] = 'attachment; name=%s' % attachment.name.split('/')[-1]
+        return response

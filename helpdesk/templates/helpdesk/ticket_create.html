@@ -6,9 +6,15 @@
         <div class="col-xs-12">
             <h2>Create new ticket</h2>
 
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% bootstrap_form form %}
+
+                {{ attachment_formset.management_form }}
+                {% for form in attachment_formset %}
+                    {% bootstrap_form form %}
+                {% endfor %}
+
                 {% bootstrap_button 'Submit' button_type='submit' %}
             </form>
         </div>

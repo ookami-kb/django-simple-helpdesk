@@ -14,7 +14,14 @@
                 </div>
                 <div class="panel-body">
                     <iframe src="{% url 'helpdesk_email' object.pk %}" frameborder="none"
-                        width="100%" height="300px" sandbox></iframe>
+                            width="100%" height="300px" sandbox></iframe>
+
+                    <ol>
+                        {% for attachment in attachments %}
+                            <li><a href="{{ attachment.attachment.url }}">{{ attachment.filename }}</a>
+                                ({{ attachment.attachment.size|filesizeformat }})</li>
+                        {% endfor %}
+                    </ol>
                 </div>
             </div>
 
@@ -27,9 +34,15 @@
                     <h3 class="panel-title">Add answer</h3>
                 </div>
                 <div class="panel-body">
-                    <form method="post">
+                    <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         {% bootstrap_form reply_form %}
+
+                        {{ attachment_formset.management_form }}
+                        {% for form in attachment_formset %}
+                            {% bootstrap_form form %}
+                        {% endfor %}
+
                         {% bootstrap_button 'Submit' button_type='submit' name='reply' %}
                     </form>
                 </div>

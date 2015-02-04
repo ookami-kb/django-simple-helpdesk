@@ -1,7 +1,12 @@
 # -*- encoding: utf-8 -*-
+import os
+from django.conf import settings
 
 from django.contrib.auth.models import User
+from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import get_current_site
+from django.core.files.storage import FileSystemStorage
 from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -52,6 +57,21 @@ class State(models.Model):
         return mark_safe(u'<span class="label label-%s">%s</span>' % (self.color, self.title))
 
 
+attachment_fs = FileSystemStorage(location=settings.BASE_DIR + '/attachments',
+                                  base_url='/helpdesk/attachments/')
+
+
+class MailAttachment(models.Model):
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = generic.GenericForeignKey()
+    attachment = models.FileField(upload_to='tickets', storage=attachment_fs)
+
+    @property
+    def filename(self):
+        return os.path.basename(self.attachment.name)
+
+
 class Ticket(models.Model):
     PRIORITIES = (
         (0, u'Low'),
@@ -68,6 +88,7 @@ class Ticket(models.Model):
     message_id = models.CharField(max_length=255, unique=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    attachments = generic.GenericRelation(MailAttachment)
 
     @staticmethod
     def create(**kwargs):
@@ -101,6 +122,8 @@ class Ticket(models.Model):
                            self.project.email if self.project else SETTINGS['from_email'],
                            [self.customer])
         msg.content_subtype = 'html'
+        for attachment in kwargs.get('attachments', []):
+            msg.attach_file(attachment.attachment.path)
         msg.send(fail_silently=False)
 
     def get_absolute_url(self):
@@ -132,19 +155,15 @@ class Ticket(models.Model):
         )
 
 
-class TicketAttachment(models.Model):
-    ticket = models.ForeignKey(Ticket)
-    attachment = models.FileField(upload_to='tickets')
-
-
 class Comment(models.Model):
     ticket = models.ForeignKey(Ticket)
     created = models.DateTimeField(auto_now_add=True)
     body = models.TextField()
     author = models.ForeignKey(User, blank=True, null=True, related_name='helpdesk_answers')
-    internal = models.BooleanField(default=False)
+    internal = models.BooleanField(default=False, help_text=u'If checked this comment will not be emailed to client')
     notified = models.BooleanField(default=True, editable=False)
     message_id = models.CharField(max_length=256, blank=True, null=True)
+    attachments = generic.GenericRelation(MailAttachment)
 
     def is_from_client(self):
         return self.author is None
@@ -188,7 +207,8 @@ def on_new_answer(sender, ticket, answer, **kwargs):
     if not answer.internal:
         subject = u'Re: [HD-%d] %s' % (ticket.pk, ticket.title)
         try:
-            ticket.notify_customer(subject, 'helpdesk/customer_answer.html', answer=answer)
+            ticket.notify_customer(subject, 'helpdesk/customer_answer.html',
+                                   answer=answer, attachments=answer.attachments.all())
         except:
             answer.notified = False
             answer.save()
