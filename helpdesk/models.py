@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+import base64
 import os
 from django.conf import settings
 
@@ -123,7 +124,11 @@ class Ticket(models.Model):
                            [self.customer])
         msg.content_subtype = 'html'
         for attachment in kwargs.get('attachments', []):
-            msg.attach_file(attachment.attachment.path)
+            filename = os.path.basename(attachment.attachment.path)
+            filename = '=?UTF-8?B?%s?=' % base64.b64encode(b'%s' % filename.encode('utf-8'))
+            with open(attachment.attachment.path, 'rb') as f:
+                content = f.read()
+            msg.attach(filename, content, None)
         msg.send(fail_silently=False)
 
     def get_absolute_url(self):
