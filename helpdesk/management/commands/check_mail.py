@@ -44,6 +44,8 @@ class Command(BaseCommand):
 
                 if Ticket.objects.filter(message_id=uid).exists() or Comment.objects.filter(message_id=uid).exists():
                     logger.info(u'  Message already exists, skipping')
+                    if SETTINGS['mark_seen']:
+                        imbox.mark_seen(uid)
                     continue
 
                 try:
