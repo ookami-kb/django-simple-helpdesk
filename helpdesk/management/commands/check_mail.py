@@ -83,7 +83,7 @@ class Command(BaseCommand):
         logger.info("--- Finished processing emails ---")
 
     def handle(self, *args, **options):
-        logger.info(u"\n===== Started check_mail =====")
+        logger.info(u"===== Started check_mail =====")
         imbox = Imbox('imap.gmail.com',
                       username=SETTINGS['username'],
                       password=SETTINGS['password'],
