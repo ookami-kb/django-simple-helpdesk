@@ -35,8 +35,8 @@ class Command(BaseCommand):
             return None
 
     def handle_messages(self, imbox, project):
-        unread_messages = imbox.messages(unread=True, folder='INBOX', sent_to=project.email)
         logger.info("--- Started processing emails ---")
+        unread_messages = imbox.messages(unread=True, folder='INBOX', sent_to=project.email)
         for uid, message in unread_messages:
             try:
                 subject = getattr(message, 'subject', u'Email ticket')
@@ -83,6 +83,7 @@ class Command(BaseCommand):
         logger.info("--- Finished processing emails ---")
 
     def handle(self, *args, **options):
+        logger.info(u"\n===== Started check_mail =====")
         imbox = Imbox('imap.gmail.com',
                       username=SETTINGS['username'],
                       password=SETTINGS['password'],
@@ -93,6 +94,7 @@ class Command(BaseCommand):
             self.handle_messages(imbox, project)
 
         imbox.logout()
+        logger.info(u"===== Finished check_mail =====")
 
     def _create_attachments(self, attachments, obj):
         for attachment in attachments:
