@@ -4,19 +4,29 @@
 {% block content %}
     <div class="row">
         <div class="col-xs-12">
-            <h2>Create new ticket</h2>
+            <div class="row">
+                <div class="col-lg-6 col-lg-offset-3">
+                    <div class="well">
+                        <h2>Create new ticket</h2>
 
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {% bootstrap_form form %}
+                        <p class="alert alert-info">Ticket will be created and comment will be sent to user.</p>
 
-                {{ attachment_formset.management_form }}
-                {% for form in attachment_formset %}
-                    {% bootstrap_form form %}
-                {% endfor %}
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {% bootstrap_form form %}
 
-                {% bootstrap_button 'Submit' button_type='submit' %}
-            </form>
+                            {{ attachment_formset.management_form }}
+                            {% for form in attachment_formset %}
+                                {% bootstrap_form form %}
+                            {% endfor %}
+
+                            {% bootstrap_button 'Create and send' button_type='submit' %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
     </div>
 {% endblock %}
