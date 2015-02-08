@@ -36,6 +36,7 @@ class Command(BaseCommand):
 
     def handle_messages(self, imbox, project):
         unread_messages = imbox.messages(unread=True, folder='INBOX', sent_to=project.email)
+        logger.info("--- Started processing emails ---")
         for uid, message in unread_messages:
             try:
                 subject = getattr(message, 'subject', u'Email ticket')
@@ -77,6 +78,7 @@ class Command(BaseCommand):
                     imbox.mark_seen(uid)
             except Exception:
                 logger.exception(u'  Error while retrieving email %s' % uid)
+        logger.info("--- Finished processing emails ---")
 
     def handle(self, *args, **options):
         imbox = Imbox('imap.gmail.com',
