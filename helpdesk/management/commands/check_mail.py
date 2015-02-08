@@ -87,6 +87,7 @@ class Command(BaseCommand):
                       ssl=True)
 
         for project in Project.objects.all():
+            logger.info(u"=== Processing project %s ===" % project.title)
             self.handle_messages(imbox, project)
 
         imbox.logout()
