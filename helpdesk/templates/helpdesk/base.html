@@ -27,7 +27,7 @@
 
     <div class="navbar-collapse collapse navbar-responsive-collapse">
         <ul class="nav navbar-nav">
-            {% if perms.helpdesk.create_ticket %}
+            {% if perms.helpdesk.add_ticket %}
                 <li><a href="{% url 'helpdesk_ticket_create' %}">Create ticket</a></li>
             {% endif %}
         </ul>
