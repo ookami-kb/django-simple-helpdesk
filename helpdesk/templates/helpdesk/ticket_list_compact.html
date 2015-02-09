@@ -1,0 +1,17 @@
+{% load helpdesk %}
+<ul class="list-unstyled ticket-compact-list">
+    {% for ticket in object_list %}
+        <li class="{% if ticket.state.machine_name == 'resolved' %}resolved{% endif %}">
+            <a href="{{ ticket.get_absolute_url }}"
+               title="{{ ticket.title }}">
+                {{ ticket.priority_label }}
+                <span class="label label-no-bg">HD-{{ ticket.pk }} {{ ticket.title }}</span>
+
+                <span class="label pull-right" title="Updated">{{ ticket.updated|date:"d E" }}</span>
+                <span class="label">{{ ticket.project|default:"" }}</span>
+                <span class="label {% if ticket.assignee == request.user %}label-success{% endif %}">
+                    {% assignee ticket %}</span>
+            </a>
+        </li>
+    {% endfor %}
+</ul>

@@ -1,0 +1,3 @@
+{% if perms.helpdesk.add_ticket %}
+    <li><a href="{% url 'helpdesk_ticket_create' %}">Create ticket</a></li>
+{% endif %}

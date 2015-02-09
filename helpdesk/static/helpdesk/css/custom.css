@@ -30,3 +30,34 @@
 .help-block {
     font-size: smaller;
 }
+
+.ticket-compact-list li {
+
+}
+
+.ticket-compact-list li .label {
+    vertical-align: top;
+}
+
+.ticket-compact-list li a {
+    display: block;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    border-bottom: 1px solid rgba(0,0,0,.1);
+}
+
+.ticket-compact-list li.resolved span {
+    opacity: .4;
+}
+
+.ticket-compact-list li a:hover,
+.ticket-compact-list li a:focus,
+.ticket-compact-list li a:active {
+    text-decoration: none;
+    background: rgba(0,0,0,.1);
+}
+
+.label-no-bg {
+    background: none;
+    color: #333;
+}

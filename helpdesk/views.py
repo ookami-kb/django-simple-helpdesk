@@ -25,14 +25,29 @@ class HomeView(ListView):
     filter = None
     paginate_by = 20
 
+    def _get_list_template(self):
+        mode = self.request.session.get('mode', 'normal')
+        if mode not in ['normal', 'compact']:
+            mode = 'normal'
+
+        if mode == 'normal':
+            return 'helpdesk/ticket_list.html'
+        else:
+            return 'helpdesk/ticket_list_compact.html'
+
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         context['filter_form'] = self.filter_form
+        context['list_template'] = self._get_list_template()
         return context
 
     def dispatch(self, request, *args, **kwargs):
         self.filter = Filter(request)
-        self.filter_form = FilterForm(data=request.POST or None, initial=self.filter.get_form_init())
+        initial = self.filter.get_form_init()
+        initial.update(
+            {'mode': request.session.get('mode', 'normal')}
+        )
+        self.filter_form = FilterForm(data=request.POST or None, initial=initial)
         return super(HomeView, self).dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -40,6 +55,9 @@ class HomeView(ListView):
             self.filter.by_assignee(self.filter_form.cleaned_data['assignee'])
             self.filter.by_state(self.filter_form.cleaned_data['state'])
             self.filter.by_project(self.filter_form.cleaned_data['project'])
+
+            self.request.session['mode'] = self.filter_form.cleaned_data['mode']
+
             return HttpResponseRedirect(reverse('helpdesk_home'))
         return self.render_to_response(self.get_context_data())
 

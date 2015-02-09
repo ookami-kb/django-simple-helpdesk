@@ -36,6 +36,11 @@ class FilterForm(forms.Form):
         ('me', u'Me'),
         ('all', u'All')
     )
+    MODES = (
+        ('normal', u'Normal'),
+        ('compact', u'Compact')
+    )
+    mode = forms.ChoiceField(choices=MODES)
     assignee = forms.ChoiceField(choices=ASSIGNEES)
     state = forms.ModelChoiceField(State.objects.all(), required=False, empty_label=u'All')
     project = forms.ModelChoiceField(Project.objects.all(), required=False, empty_label=u'All')

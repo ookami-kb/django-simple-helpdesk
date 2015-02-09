@@ -10,7 +10,7 @@
     <link href="{{ STATIC_URL }}helpdesk/css/ripples.min.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}helpdesk/css/material-wfont.min.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}helpdesk/css/jquery.dropdown.css?v1" rel="stylesheet">
-    <link href="{{ STATIC_URL }}helpdesk/css/custom.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}helpdesk/css/custom.css?v1" rel="stylesheet">
 
 </head>
 
@@ -27,9 +27,7 @@
 
     <div class="navbar-collapse collapse navbar-responsive-collapse">
         <ul class="nav navbar-nav">
-            {% if perms.helpdesk.add_ticket %}
-                <li><a href="{% url 'helpdesk_ticket_create' %}">Create ticket</a></li>
-            {% endif %}
+            {% include 'helpdesk/menu.html' %}
         </ul>
     </div>
 </div>
