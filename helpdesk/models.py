@@ -34,6 +34,7 @@ class Project(models.Model):
 class HelpdeskProfile(models.Model):
     user = models.OneToOneField(User)
     signature = models.TextField(blank=True, null=True)
+    send_notifications = models.BooleanField(default=True)
 
 
 class State(models.Model):
@@ -103,6 +104,10 @@ class Ticket(models.Model):
     def notify_assignee(self, subject, template, **kwargs):
         if self.assignee is None:
             return
+
+        if hasattr(self.assignee, 'helpdeskprofile') and not self.assignee.helpdeskprofile.send_notifications:
+            return
+
         data = {
             'ticket': self,
         }
