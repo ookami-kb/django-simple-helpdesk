@@ -11,6 +11,7 @@
 }
 .dropdownjs > input.focus ~ ul {
   transform: scale(1);
+    -webkit-transform: scale(1);
 }
 .dropdownjs > ul {
   position: absolute;
@@ -18,15 +19,18 @@
   margin: 0;
   min-width: 200px;
   transform: scale(0);
+  -webkit-transform: scale(0);
   z-index: 10000;
 }
 .dropdownjs > ul[placement=top-left] {
   transform-origin: bottom left;
+  -webkit-transform-origin: bottom left;
   bottom: 0;
   left: 0;
 }
 .dropdownjs > ul[placement=bottom-left] {
   transform-origin: top left;
+  -webkit-transform-origin: top left;
   top: 0;
   left: 0;
 }
@@ -54,6 +58,7 @@ select[data-dropdownjs][disabled] + .dropdownjs > input[readonly] {
   background: #FFF;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 6px rgba(0, 0, 0, 0.12);
   transition: transform 0.2s ease-out;
+    -webkit-transition: transform 0.2s ease-out;;
   padding: 10px;
   overflow: auto;
   max-width: 500px;
