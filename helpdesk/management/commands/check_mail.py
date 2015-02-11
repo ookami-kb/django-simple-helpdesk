@@ -98,7 +98,7 @@ class Command(BaseCommand):
 
     def _create_attachments(self, attachments, obj):
         for attachment in attachments:
-            f = ContentFile(attachment['content'].read(), name=attachment['filename'])
+            f = ContentFile(attachment['content'].read(), name=getattr(attachment, 'filename', 'Attachment'))
             mail_attachment = MailAttachment(
                 attachment=f, content_object=obj
             )
