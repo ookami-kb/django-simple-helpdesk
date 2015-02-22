@@ -18,9 +18,24 @@
             </div>
         </div>
         <div class="col-sm-8 col-sm-pull-4">
+            <div class="row">
+                <div class="col-xs-12">
+                    <form class="row search-form">
+                        <div class="col-lg-8 col-xs-6">
+                            {% bootstrap_field search_form.search layout='inline' %}
+                        </div>
+                        <div class="col-lg-2 col-xs-3">
+                            {% bootstrap_button 'Search' button_type='submit' button_class='btn-xs btn-block' %}
+                        </div>
+                        <div class="col-lg-2 col-xs-3">
+                            <a href="?" class="btn btn-xs btn-default">Reset</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
             {% include list_template %}
             <div class="text-center">
-                {% bootstrap_pagination page_obj %}
+                {% bootstrap_pagination page_obj extra=extra %}
             </div>
         </div>
     </div>

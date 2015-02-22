@@ -52,3 +52,9 @@ class TicketCreateForm(forms.ModelForm):
     class Meta:
         model = Ticket
         fields = ['title', 'assignee', 'priority', 'project', 'state', 'customer', 'comment']
+
+
+class SearchForm(forms.Form):
+    search = forms.CharField(required=False, widget=forms.TextInput(attrs={
+        'placeholder': u'Search by email, title or body',
+    }))

@@ -4,13 +4,15 @@ import time
 
 from django.contrib.contenttypes.generic import generic_inlineformset_factory
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
+from django.utils.http import urlencode
 from django.utils.timezone import now
 from django.views.generic import TemplateView, ListView, DetailView, View, CreateView
 
 from helpdesk import Filter
-from helpdesk.forms import CommentForm, TicketForm, FilterForm, TicketCreateForm
+from helpdesk.forms import CommentForm, TicketForm, FilterForm, TicketCreateForm, SearchForm
 from helpdesk.models import Ticket, HistoryAction, Comment, MailAttachment
 from helpdesk.signals import new_answer, ticket_updated
 
@@ -24,6 +26,8 @@ class HomeView(ListView):
     filter_form = None
     filter = None
     paginate_by = 20
+    search = None
+    search_form = None
 
     def _get_list_template(self):
         mode = self.request.session.get('mode', 'normal')
@@ -39,9 +43,16 @@ class HomeView(ListView):
         context = super(HomeView, self).get_context_data(**kwargs)
         context['filter_form'] = self.filter_form
         context['list_template'] = self._get_list_template()
+        context['search_form'] = self.search_form
+        context['search'] = self.search
+        context['extra'] = urlencode({'search': self.search}) if self.search else None
         return context
 
     def dispatch(self, request, *args, **kwargs):
+        self.search_form = SearchForm(request.GET)
+        if self.search_form.is_valid():
+            self.search = self.search_form.cleaned_data.get('search', None)
+
         self.filter = Filter(request)
         initial = self.filter.get_form_init()
         initial.update(
@@ -66,6 +77,13 @@ class HomeView(ListView):
         filters = self.filter.get_filters()
         if filters:
             queryset = queryset.filter(**filters)
+        if self.search:
+            keywords = [w for w in self.search.split(' ') if w]
+            print keywords
+            qs = Q()
+            for word in keywords:
+                qs |= Q(customer__icontains=word) | Q(title__icontains=word) | Q(body__icontains=word)
+            queryset = queryset.filter(qs)
         return queryset.order_by('-updated')
 
 
