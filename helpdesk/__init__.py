@@ -7,6 +7,7 @@ HELPDESK_DEFAULTS = {
     'from_email': settings.DEFAULT_FROM_EMAIL,
     'host': None,
     'mark_seen': True,
+    'urlconf': None,
 }
 
 SETTINGS = HELPDESK_DEFAULTS.copy()
