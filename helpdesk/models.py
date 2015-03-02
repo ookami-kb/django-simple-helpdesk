@@ -92,6 +92,16 @@ class Ticket(models.Model):
     updated = models.DateTimeField(auto_now=True)
     attachments = generic.GenericRelation(MailAttachment)
 
+    def reply(self, text, author=None, state='resolved'):
+        answer = Comment.objects.create(
+            ticket=self,
+            body=text,
+            author=author or self.project.default_assignee
+        )
+        self.state = State.objects.get(machine_name=state)
+        self.save()
+        new_answer.send(sender=self.__class__, ticket=self, answer=answer)
+
     @staticmethod
     def create(**kwargs):
         author = kwargs.pop('author', None)
