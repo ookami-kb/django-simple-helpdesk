@@ -45,6 +45,12 @@ class FilterForm(forms.Form):
     state = forms.ModelChoiceField(State.objects.all(), required=False, empty_label=u'All')
     project = forms.ModelChoiceField(Project.objects.all(), required=False, empty_label=u'All')
 
+    def __init__(self, *args, **kwargs):
+        email_filter = kwargs.pop('email_filter', False)
+        super(FilterForm, self).__init__(*args, **kwargs)
+        if email_filter:
+            self.fields['email'] = forms.EmailField(required=False)
+
 
 class TicketCreateForm(forms.ModelForm):
     comment = RichTextFormField()

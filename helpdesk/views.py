@@ -58,7 +58,8 @@ class HomeView(ListView):
         initial.update(
             {'mode': request.session.get('mode', 'normal')}
         )
-        self.filter_form = FilterForm(data=request.POST or None, initial=initial)
+        self.filter_form = FilterForm(data=request.POST or None, initial=initial,
+                                      email_filter=request.user.has_perm('helpdesk.view_customer'))
         return super(HomeView, self).dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -66,6 +67,7 @@ class HomeView(ListView):
             self.filter.by_assignee(self.filter_form.cleaned_data['assignee'])
             self.filter.by_state(self.filter_form.cleaned_data['state'])
             self.filter.by_project(self.filter_form.cleaned_data['project'])
+            self.filter.by_email(self.filter_form.cleaned_data.get('email', None))
 
             self.request.session['mode'] = self.filter_form.cleaned_data['mode']
 

@@ -47,11 +47,15 @@ class Filter(object):
             value = value.machine_name
         self.save('project', value)
 
+    def by_email(self, value):
+        self.save('email', value)
+
     def get_form_init(self):
         init = {
             'assignee': self.request.session.get('assignee', 'all'),
             'state': self.request.session.get('state', 'all'),
-            'project': self.request.session.get('project', 'all')
+            'project': self.request.session.get('project', 'all'),
+            'email': self.request.session.get('email', '')
         }
         return init
 
@@ -70,5 +74,9 @@ class Filter(object):
         project = self.request.session.get('project', 'all')
         if project != 'all':
             filters['project__machine_name'] = project
+
+        email = self.request.session.get('email', None)
+        if email:
+            filters['customer'] = email
 
         return filters
