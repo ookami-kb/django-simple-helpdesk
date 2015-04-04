@@ -31,6 +31,12 @@ class Project(models.Model):
         return self.title
 
 
+class ProjectAlias(models.Model):
+    project = models.ForeignKey(Project)
+    email = models.EmailField(unique=True)
+    assignee = models.ForeignKey(User, blank=True, null=True)
+
+
 class HelpdeskProfile(models.Model):
     user = models.OneToOneField(User)
     signature = models.TextField(blank=True, null=True)

@@ -7,7 +7,7 @@ from django.core.management import BaseCommand
 from imbox import Imbox
 
 from helpdesk import SETTINGS
-from helpdesk.models import Ticket, Comment, Project, MailAttachment
+from helpdesk.models import Ticket, Comment, Project, MailAttachment, ProjectAlias
 
 
 logger = logging.getLogger('helpdesk.mail')
@@ -34,7 +34,7 @@ class Command(BaseCommand):
         except Ticket.DoesNotExist:
             return None
 
-    def handle_messages(self, imbox, project):
+    def handle_messages(self, imbox, project, assignee=None):
         logger.info("--- Started processing emails ---")
         unread_messages = imbox.messages(unread=True, folder='INBOX', sent_to=project.email)
         for uid, message in unread_messages:
@@ -61,7 +61,7 @@ class Command(BaseCommand):
                         body=body,
                         customer=message.sent_from[0]['email'],
                         message_id=uid,
-                        assignee=project.default_assignee,
+                        assignee=assignee or project.default_assignee,
                         project=project
                     )
                     logger.info(u'  Created new ticket')
@@ -92,6 +92,13 @@ class Command(BaseCommand):
         for project in Project.objects.all():
             logger.info(u"=== Processing project %s ===" % project.title)
             self.handle_messages(imbox, project)
+
+        for alias in ProjectAlias.objects.all():
+            logger.info(u"=== Processing alias '{alias}' for project '{project}' ===".format({
+                'alias': alias.email,
+                'project': alias.project.title,
+            }))
+            self.handle_messages(imbox, alias.project, alias.assignee)
 
         imbox.logout()
         logger.info(u"===== Finished check_mail =====")
