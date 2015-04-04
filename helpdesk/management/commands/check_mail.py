@@ -94,10 +94,10 @@ class Command(BaseCommand):
             self.handle_messages(imbox, project)
 
         for alias in ProjectAlias.objects.all():
-            logger.info(u"=== Processing alias '{alias}' for project '{project}' ===".format({
-                'alias': alias.email,
-                'project': alias.project.title,
-            }))
+            logger.info(u"=== Processing alias '{alias}' for project '{project}' ===".format(
+                alias=alias.email,
+                project=alias.project.title)
+            )
             self.handle_messages(imbox, alias.project, alias.assignee)
 
         imbox.logout()
