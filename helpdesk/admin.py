@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.contrib.contenttypes.generic import GenericTabularInline
 
-from helpdesk.models import Ticket, Project, State, Comment, HelpdeskProfile, MailAttachment
+from helpdesk.models import Ticket, Project, State, Comment, HelpdeskProfile, MailAttachment, ProjectAlias
 
 
 class AttachmentInline(GenericTabularInline):
@@ -31,8 +31,13 @@ class HelpdeskProfileAdmin(admin.ModelAdmin):
     list_display = ('user',)
 
 
+class ProjectAliasAdmin(admin.ModelAdmin):
+    list_display = ('email', 'project')
+
+
 admin.site.register(Ticket, TicketAdmin)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(State, StateAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(HelpdeskProfile, HelpdeskProfileAdmin)
+admin.site.register(ProjectAlias, ProjectAliasAdmin)
