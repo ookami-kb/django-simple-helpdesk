@@ -34,9 +34,9 @@ class Command(BaseCommand):
         except Ticket.DoesNotExist:
             return None
 
-    def handle_messages(self, imbox, project, assignee=None):
+    def handle_messages(self, imbox, project, email=None, assignee=None):
         logger.info("--- Started processing emails ---")
-        unread_messages = imbox.messages(unread=True, folder='INBOX', sent_to=project.email)
+        unread_messages = imbox.messages(unread=True, folder='INBOX', sent_to=email or project.email)
         for uid, message in unread_messages:
             try:
                 subject = getattr(message, 'subject', u'Email ticket')
@@ -98,7 +98,7 @@ class Command(BaseCommand):
                 alias=alias.email,
                 project=alias.project.title)
             )
-            self.handle_messages(imbox, alias.project, alias.assignee)
+            self.handle_messages(imbox, alias.project, email=alias.email, assignee=alias.assignee)
 
         imbox.logout()
         logger.info(u"===== Finished check_mail =====")
