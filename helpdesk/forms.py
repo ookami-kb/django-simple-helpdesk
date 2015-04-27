@@ -13,7 +13,7 @@ class ProfileChoiceField(ModelChoiceField):
         return u'%s (%s)' % (obj.first_name, label) if label else obj.first_name
 
     def __init__(self, *args, **kwargs):
-        queryset = User.objects.filter(groups__name='Helpdesk support')
+        queryset = User.objects.filter(groups__name='Helpdesk support').order_by('first_name')
         super(ProfileChoiceField, self).__init__(queryset, *args, **kwargs)
 
 
