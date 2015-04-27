@@ -41,6 +41,7 @@ class HelpdeskProfile(models.Model):
     user = models.OneToOneField(User)
     signature = models.TextField(blank=True, null=True)
     send_notifications = models.BooleanField(default=True)
+    label = models.CharField(max_length=255, blank=True, null=True)
 
 
 class State(models.Model):

@@ -1,8 +1,20 @@
 # -*- encoding: utf-8 -*-
 from ckeditor.fields import RichTextFormField
 from django import forms
+from django.contrib.auth.models import User
+from django.forms import ModelChoiceField
 
-from helpdesk.models import State, Comment, Ticket, Project
+from helpdesk.models import State, Comment, Ticket, Project, HelpdeskProfile
+
+
+class ProfileChoiceField(ModelChoiceField):
+    def label_from_instance(self, obj):
+        label = obj.helpdeskprofile.label if hasattr(obj, 'helpdeskprofile') else None
+        return u'%s (%s)' % (obj.first_name, label) if label else obj.first_name
+
+    def __init__(self, *args, **kwargs):
+        queryset = User.objects.filter(groups__name='Helpdesk support')
+        super(ProfileChoiceField, self).__init__(queryset, *args, **kwargs)
 
 
 class CommentForm(forms.ModelForm):
@@ -20,6 +32,8 @@ class CommentForm(forms.ModelForm):
 
 
 class TicketForm(forms.ModelForm):
+    assignee = ProfileChoiceField()
+
     def __init__(self, *args, **kwargs):
         super(TicketForm, self).__init__(*args, **kwargs)
         self.fields['project'].empty_label = u'- None -'
@@ -54,6 +68,7 @@ class FilterForm(forms.Form):
 
 class TicketCreateForm(forms.ModelForm):
     comment = RichTextFormField()
+    assignee = ProfileChoiceField()
 
     class Meta:
         model = Ticket
