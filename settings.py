@@ -12,7 +12,11 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-from local_settings import *
+try:
+    from local_settings import *
+except:
+    from local_settings_default import *
+
 
 SECRET_KEY = 'e&0(!y8&ni4phx045_k29obf%0zw#*_3_x953rgn8l)hmmuf6@'
 
