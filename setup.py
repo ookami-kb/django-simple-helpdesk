@@ -10,6 +10,6 @@ setup(
     author_email='ookami.kb@gmail.com',
     description='Simple HelpDesk for Django',
     packages=find_packages(),
-    install_requires=['django'],
+    install_requires=['django', 'django-bootstrap3'],
     include_package_data=True,
 )

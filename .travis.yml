@@ -5,6 +5,7 @@ python:
   - "3.4"
 install:
   - python setup.py -q install
+  - pip install https://github.com/ookami-kb/imbox/archive/master.zip
 env:
   - Django=1.8
 script: python manage.py test
