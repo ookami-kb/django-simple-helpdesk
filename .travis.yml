@@ -5,4 +5,6 @@ python:
   - "3.4"
 install:
   - python setup.py -q install
-script: nosetests
+env:
+  - Django=1.8
+script: python manage.py test
