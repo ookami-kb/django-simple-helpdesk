@@ -81,7 +81,7 @@ class HomeView(ListView):
             queryset = queryset.filter(**filters)
         if self.search:
             keywords = [w for w in self.search.split(' ') if w]
-            print keywords
+            print(keywords)
             qs = Q()
             for word in keywords:
                 qs |= Q(customer__icontains=word) | Q(title__icontains=word) | Q(body__icontains=word)
