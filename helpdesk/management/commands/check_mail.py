@@ -22,7 +22,7 @@ class Command(BaseCommand):
     server = None
 
     def _get_initial_issue(self, message):
-        subject = getattr(message, 'subject', u'Email ticket')
+        subject = getattr(message, 'subject', 'Email ticket')
         customer = message.sent_from[0]['email']
         pattern = re.compile(r'.*\[HD-(\d+)\].*')
         m = pattern.match(subject)
@@ -41,7 +41,7 @@ class Command(BaseCommand):
         unread_messages = imbox.messages(unread=True, folder='INBOX', sent_to=email or project.email)
         for uid, message in unread_messages:
             try:
-                subject = getattr(message, 'subject', u'Email ticket')
+                subject = getattr(message, 'subject', 'Email ticket')
                 logger.info("Got message %s: %s" % (uid, subject))
 
                 if Ticket.objects.filter(message_id=uid).exists() or Comment.objects.filter(message_id=uid).exists():

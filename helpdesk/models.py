@@ -186,7 +186,7 @@ class Comment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     body = models.TextField()
     author = models.ForeignKey(User, blank=True, null=True, related_name='helpdesk_answers')
-    internal = models.BooleanField(default=False, help_text=u'If checked this comment will not be emailed to client')
+    internal = models.BooleanField(default=False, help_text='If checked this comment will not be emailed to client')
     notified = models.BooleanField(default=True, editable=False)
     message_id = models.CharField(max_length=256, blank=True, null=True)
     attachments = generic.GenericRelation(MailAttachment)

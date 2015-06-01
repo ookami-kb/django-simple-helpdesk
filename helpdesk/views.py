@@ -107,8 +107,8 @@ class TicketCreateView(CreateView):
             return self.render_to_response(self.get_context_data())
         data = form.cleaned_data
         comment = data.pop('comment')
-        ticket = Ticket.create(body=u'This ticket was created by [user:%d]' % self.request.user.pk,
-                               message_id=u'ticket-%d' % time.mktime(now().timetuple()),
+        ticket = Ticket.create(body='This ticket was created by [user:%d]' % self.request.user.pk,
+                               message_id='ticket-%d' % time.mktime(now().timetuple()),
                                author=self.request.user,
                                **data)
         reply = Comment.objects.create(ticket=ticket, body=comment, author=self.request.user)
@@ -171,7 +171,7 @@ class TicketView(DetailView):
             new_answer.send(sender=Comment, ticket=ticket, answer=reply)
             HistoryAction.objects.create(
                 user=reply.author,
-                change=u'added %scomment and set state to <i>%s</i>' % (
+                change='added %scomment and set state to <i>%s</i>' % (
                     'internal ' if reply.internal else '',
                     reply.ticket.state),
                 ticket=reply.ticket
@@ -184,12 +184,12 @@ class TicketView(DetailView):
                 old_value = self._get_display_value(fieldname)
                 setattr(self.object, fieldname, self.ticket_form.cleaned_data[fieldname])
                 new_value = self._get_display_value(fieldname)
-                changes.append(u'%s: %s → %s' % (fieldname, old_value, new_value))
+                changes.append('%s: %s → %s' % (fieldname, old_value, new_value))
             self.object.save(update_fields=self.ticket_form.changed_data)
             if changes:
                 HistoryAction.objects.create(
                     user=request.user,
-                    change=u'\n'.join(changes),
+                    change='\n'.join(changes),
                     ticket=self.object
                 )
                 ticket_updated.send(sender=Ticket,
