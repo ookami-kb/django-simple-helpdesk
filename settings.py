@@ -38,7 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'south',
+    # 'south',
     'helpdesk',
     'bootstrap3',
     'widget_tweaks',

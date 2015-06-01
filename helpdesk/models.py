@@ -147,7 +147,7 @@ class Ticket(models.Model):
         msg.content_subtype = 'html'
         for attachment in kwargs.get('attachments', []):
             filename = os.path.basename(attachment.attachment.path)
-            filename = '=?UTF-8?B?%s?=' % base64.b64encode(b'%s' % filename.encode('utf-8'))
+            filename = '=?UTF-8?B?%s?=' % base64.b64encode(bytes(filename, encoding='utf-8'))
             with open(attachment.attachment.path, 'rb') as f:
                 content = f.read()
             msg.attach(filename, content, None)
