@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 import base64
 import os
 from django.conf import settings
@@ -27,7 +26,7 @@ class Project(models.Model):
     email = models.EmailField()
     default_assignee = models.ForeignKey(User, blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
 
@@ -46,24 +45,24 @@ class HelpdeskProfile(models.Model):
 
 class State(models.Model):
     COLORS = (
-        ('default', u'Default'),
-        ('primary', u'Primary'),
-        ('success', u'Success'),
-        ('warning', u'Warning'),
-        ('danger', u'Danger'),
-        ('info', u'Info')
+        ('default', 'Default'),
+        ('primary', 'Primary'),
+        ('success', 'Success'),
+        ('warning', 'Warning'),
+        ('danger', 'Danger'),
+        ('info', 'Info')
     )
     machine_name = models.CharField(max_length=32, primary_key=True)
     title = models.CharField(max_length=64)
     resolved = models.BooleanField(default=False)
     color = models.CharField(max_length=32, default='default', choices=COLORS)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     @property
     def label(self):
-        return mark_safe(u'<span class="label label-%s">%s</span>' % (self.color, self.title))
+        return mark_safe('<span class="label label-%s">%s</span>' % (self.color, self.title))
 
 
 attachment_fs = FileSystemStorage(location=settings.BASE_DIR + '/attachments',
@@ -83,9 +82,9 @@ class MailAttachment(models.Model):
 
 class Ticket(models.Model):
     PRIORITIES = (
-        (0, u'Low'),
-        (1, u'Normal'),
-        (2, u'High')
+        (0, 'Low'),
+        (1, 'Normal'),
+        (2, 'High')
     )
     title = models.CharField(max_length=255)
     body = models.TextField()
@@ -159,8 +158,8 @@ class Ticket(models.Model):
     def get_full_url(self):
         return ''.join([SETTINGS['host'] or 'http://' + get_current_site(None).domain, self.get_absolute_url()])
 
-    def __unicode__(self):
-        return u'HD-%d %s' % (self.pk, self.title)
+    def __str__(self):
+        return 'HD-%d %s' % (self.pk, self.title)
 
     @property
     def priority_label(self):
@@ -170,7 +169,7 @@ class Ticket(models.Model):
             color = 'info'
         else:
             color = 'danger'
-        return mark_safe(u'<span class="label label-%s" title="%s">%s</span>' % (color,
+        return mark_safe('<span class="label label-%s" title="%s">%s</span>' % (color,
                                                                                  self.get_priority_display(),
                                                                                  self.get_priority_display()[0]))
 
@@ -211,19 +210,19 @@ def on_comment_inserted(sender, **kwargs):
 def on_ticket_save(sender, **kwargs):
     ticket = kwargs['instance']
     if kwargs.get('author', None) != ticket.assignee:
-        ticket.notify_assignee(u'Ticket created', 'helpdesk/ticket_created.html')
+        ticket.notify_assignee('Ticket created', 'helpdesk/ticket_created.html')
 
 
 @receiver(ticket_updated, dispatch_uid='on_ticket_update')
 def on_ticket_update(sender, **kwargs):
     if kwargs['updater'] != kwargs['ticket'].assignee:
-        kwargs['ticket'].notify_assignee(u'Ticket updated', 'helpdesk/ticket_updated.html',
+        kwargs['ticket'].notify_assignee('Ticket updated', 'helpdesk/ticket_updated.html',
                                          changes=kwargs['changes'], updater=kwargs['updater'])
 
 
 @receiver(new_comment_from_client, dispatch_uid='on_new_client_comment')
 def on_new_client_comment(sender, comment, ticket, **kwargs):
-    ticket.notify_assignee(u'Comment added', 'helpdesk/comment_added.html')
+    ticket.notify_assignee('Comment added', 'helpdesk/comment_added.html')
 
 
 @receiver(new_answer, dispatch_uid='on_new_answer')
@@ -232,7 +231,7 @@ def on_new_answer(sender, ticket, answer, **kwargs):
         ticket.notify_assignee('Answer added', 'helpdesk/answer_added.html', answer=answer)
 
     if not answer.internal:
-        subject = u'Re: [HD-%d] %s' % (ticket.pk, ticket.title)
+        subject = 'Re: [HD-%d] %s' % (ticket.pk, ticket.title)
         try:
             ticket.notify_customer(subject, 'helpdesk/customer_answer.html',
                                    answer=answer, attachments=answer.attachments.all())

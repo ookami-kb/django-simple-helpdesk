@@ -1,5 +1,6 @@
 # Created by .ignore support plugin (hsz.mobi)
 db.sqlite3
+local_settings.py
 
 ### JetBrains template
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm

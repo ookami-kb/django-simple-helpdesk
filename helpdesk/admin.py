@@ -9,35 +9,33 @@ class AttachmentInline(GenericTabularInline):
     model = MailAttachment
 
 
+@admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
     list_display = ('title', 'project', 'state', 'priority', 'assignee')
     readonly_fields = ('created', 'updated')
     inlines = [AttachmentInline]
 
 
+@admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ('machine_name', 'title')
 
 
+@admin.register(State)
 class StateAdmin(admin.ModelAdmin):
     list_display = ('machine_name', 'title')
 
 
+@admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('created', 'author', 'ticket')
 
 
+@admin.register(HelpdeskProfile)
 class HelpdeskProfileAdmin(admin.ModelAdmin):
     list_display = ('user',)
 
 
+@admin.register(ProjectAlias)
 class ProjectAliasAdmin(admin.ModelAdmin):
     list_display = ('email', 'project')
-
-
-admin.site.register(Ticket, TicketAdmin)
-admin.site.register(Project, ProjectAdmin)
-admin.site.register(State, StateAdmin)
-admin.site.register(Comment, CommentAdmin)
-admin.site.register(HelpdeskProfile, HelpdeskProfileAdmin)
-admin.site.register(ProjectAlias, ProjectAliasAdmin)

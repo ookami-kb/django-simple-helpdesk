@@ -4,11 +4,11 @@ import re
 
 from django.core.files.base import ContentFile
 from django.core.management import BaseCommand
+
 from imbox import Imbox
 
 from helpdesk import SETTINGS
 from helpdesk.models import Ticket, Comment, Project, MailAttachment, ProjectAlias
-
 
 logger = logging.getLogger('helpdesk.mail')
 
@@ -19,6 +19,8 @@ class BlackList(object):
 
 
 class Command(BaseCommand):
+    server = None
+
     def _get_initial_issue(self, message):
         subject = getattr(message, 'subject', u'Email ticket')
         customer = message.sent_from[0]['email']
@@ -40,10 +42,10 @@ class Command(BaseCommand):
         for uid, message in unread_messages:
             try:
                 subject = getattr(message, 'subject', u'Email ticket')
-                logger.info(u"Got message %s: %s" % (uid, subject))
+                logger.info("Got message %s: %s" % (uid, subject))
 
                 if Ticket.objects.filter(message_id=uid).exists() or Comment.objects.filter(message_id=uid).exists():
-                    logger.info(u'  Message already exists, skipping')
+                    logger.info('  Message already exists, skipping')
                     if SETTINGS['mark_seen']:
                         imbox.mark_seen(uid)
                     continue
@@ -64,7 +66,7 @@ class Command(BaseCommand):
                         assignee=assignee or project.default_assignee,
                         project=project
                     )
-                    logger.info(u'  Created new ticket')
+                    logger.info('  Created new ticket')
                     self._create_attachments(message.attachments, ticket)
                 else:
                     comment = Comment.objects.create(
@@ -74,38 +76,38 @@ class Command(BaseCommand):
                         ticket=initial
                     )
                     self._create_attachments(message.attachments, comment)
-                    logger.info(u'  Added comment to ticket')
+                    logger.info('  Added comment to ticket')
 
                 if SETTINGS['mark_seen']:
                     imbox.mark_seen(uid)
             except Exception:
-                logger.exception(u'  Error while retrieving email %s' % uid)
+                logger.exception('  Error while retrieving email %s' % uid)
         logger.info("--- Finished processing emails ---")
 
     def handle(self, *args, **options):
-        logger.info(u"===== Started check_mail =====")
+        logger.info("===== Started check_mail =====")
         imbox = Imbox('imap.gmail.com',
                       username=SETTINGS['username'],
                       password=SETTINGS['password'],
                       ssl=True)
 
         for project in Project.objects.all():
-            logger.info(u"=== Processing project %s ===" % project.title)
+            logger.info("=== Processing project %s ===" % project.title)
             self.handle_messages(imbox, project)
 
         for alias in ProjectAlias.objects.all():
-            logger.info(u"=== Processing alias '{alias}' for project '{project}' ===".format(
+            logger.info("=== Processing alias '{alias}' for project '{project}' ===".format(
                 alias=alias.email,
                 project=alias.project.title)
             )
             self.handle_messages(imbox, alias.project, email=alias.email, assignee=alias.assignee)
 
         imbox.logout()
-        logger.info(u"===== Finished check_mail =====")
+        logger.info("===== Finished check_mail =====")
 
     def _create_attachments(self, attachments, obj):
         for attachment in attachments:
-            f = ContentFile(attachment['content'].read(), name=getattr(attachment, 'filename', 'Attachment'))
+            f = ContentFile(attachment['content'].read(), name=attachment.get('filename', 'Attachment'))
             mail_attachment = MailAttachment(
                 attachment=f, content_object=obj
             )

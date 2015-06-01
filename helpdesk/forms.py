@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 from ckeditor.fields import RichTextFormField
 from django import forms
 from django.contrib.auth.models import User
@@ -23,8 +22,8 @@ class CommentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(CommentForm, self).__init__(*args, **kwargs)
-        self.fields['body'].widget.attrs['placeholder'] = u'Enter your answer here'
-        self.fields['body'].label = u'Answer body'
+        self.fields['body'].widget.attrs['placeholder'] = 'Enter your answer here'
+        self.fields['body'].label = 'Answer body'
 
     class Meta:
         model = Comment
@@ -36,7 +35,7 @@ class TicketForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(TicketForm, self).__init__(*args, **kwargs)
-        self.fields['project'].empty_label = u'- None -'
+        self.fields['project'].empty_label = '- None -'
         for fieldname in self.Meta.fields:
             self.fields[fieldname].show_hidden_initial = True
 
@@ -47,12 +46,12 @@ class TicketForm(forms.ModelForm):
 
 class FilterForm(forms.Form):
     ASSIGNEES = (
-        ('me', u'Me'),
-        ('all', u'All')
+        ('me', 'Me'),
+        ('all', 'All')
     )
     MODES = (
-        ('normal', u'Normal'),
-        ('compact', u'Compact')
+        ('normal', 'Normal'),
+        ('compact', 'Compact')
     )
     mode = forms.ChoiceField(choices=MODES)
     assignee = forms.ChoiceField(choices=ASSIGNEES)
@@ -77,5 +76,5 @@ class TicketCreateForm(forms.ModelForm):
 
 class SearchForm(forms.Form):
     search = forms.CharField(required=False, widget=forms.TextInput(attrs={
-        'placeholder': u'Search by email, title or body',
+        'placeholder': 'Search by email, title or body',
     }))
