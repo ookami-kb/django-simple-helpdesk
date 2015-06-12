@@ -53,7 +53,10 @@ class Command(BaseCommand):
                 try:
                     body = message.body['html'][0]
                 except IndexError:
-                    body = message.body['plain'][0]
+                    try:
+                        body = message.body['plain'][0]
+                    except IndexError:
+                        body = ''
 
                 initial = self._get_initial_issue(message)
 
