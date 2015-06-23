@@ -62,7 +62,7 @@ class FilterForm(forms.Form):
 
     def _get_user_label(self, user):
         label = user.helpdeskprofile.label if hasattr(user, 'helpdeskprofile') else None
-        return '{} ({})'.format(user.first_name, label) if label else user.first_name
+        return u'{} ({})'.format(user.first_name, label) if label else user.first_name
 
     def __init__(self, *args, **kwargs):
         email_filter = kwargs.pop('email_filter', False)
@@ -74,9 +74,8 @@ class FilterForm(forms.Form):
         if view_assignees:
             choices = User.objects.filter(ticket__isnull=False).annotate(
                 tickets=Count('ticket')).order_by('-tickets')
-            print([u for u in choices])
             assignees = self.ASSIGNEES + tuple(
-                (u.pk, '{} - {}'.format(self._get_user_label(u), u.tickets)) for u in choices
+                (u.pk, u'{} - {}'.format(self._get_user_label(u), u.tickets)) for u in choices
             )
             self.fields['assignee'].choices = assignees
 
