@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+import re
 from django.conf import settings
 
 HELPDESK_DEFAULTS = {
@@ -29,7 +30,7 @@ class Filter(object):
             pass
 
     def by_assignee(self, value):
-        if value not in ['me', 'all']:
+        if value not in ['me', 'all'] and not re.match(r'\d+', value):
             value = 'me'
         self.save('assignee', value)
 
