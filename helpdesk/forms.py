@@ -73,7 +73,6 @@ class FilterForm(forms.Form):
         if view_assignees:
             choices = User.objects.filter(ticket__isnull=False).annotate(
                 tickets=Count('ticket')).order_by('-tickets')
-            print([u for u in choices])
             assignees = self.ASSIGNEES + tuple(
                 (u.pk, '{} - {}'.format(self._get_user_label(u), u.tickets)) for u in choices
             )
