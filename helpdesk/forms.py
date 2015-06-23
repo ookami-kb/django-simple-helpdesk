@@ -72,7 +72,7 @@ class FilterForm(forms.Form):
             self.fields['email'] = forms.EmailField(required=False)
 
         if view_assignees:
-            choices = User.objects.filter(ticket__isnull=False).annotate(
+            choices = User.objects.filter(ticket__isnull=False, ticket__state='open').annotate(
                 tickets=Count('ticket')).order_by('-tickets')
             assignees = self.ASSIGNEES + tuple(
                 (u.pk, u'{} - {}'.format(self._get_user_label(u), u.tickets)) for u in choices
