@@ -1,6 +1,7 @@
 from ckeditor.fields import RichTextFormField
 from django import forms
 from django.contrib.auth.models import User
+from django.db.models import Count
 from django.forms import ModelChoiceField
 
 from helpdesk.models import State, Comment, Ticket, Project, HelpdeskProfile
@@ -58,11 +59,25 @@ class FilterForm(forms.Form):
     state = forms.ModelChoiceField(State.objects.all(), required=False, empty_label='All')
     project = forms.ModelChoiceField(Project.objects.all(), required=False, empty_label='All')
 
+    def _get_user_label(self, user):
+        label = user.helpdeskprofile.label if hasattr(user, 'helpdeskprofile') else None
+        return '{} ({})'.format(user.first_name, label) if label else user.first_name
+
     def __init__(self, *args, **kwargs):
         email_filter = kwargs.pop('email_filter', False)
+        view_assignees = kwargs.pop('view_assignees', False)
         super(FilterForm, self).__init__(*args, **kwargs)
         if email_filter:
             self.fields['email'] = forms.EmailField(required=False)
+
+        if view_assignees:
+            choices = User.objects.filter(ticket__isnull=False).annotate(
+                tickets=Count('ticket')).order_by('-tickets')
+            print([u for u in choices])
+            assignees = self.ASSIGNEES + tuple(
+                (u.pk, '{} - {}'.format(self._get_user_label(u), u.tickets)) for u in choices
+            )
+            self.fields['assignee'].choices = assignees
 
 
 class TicketCreateForm(forms.ModelForm):

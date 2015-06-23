@@ -59,7 +59,8 @@ class HomeView(ListView):
             {'mode': request.session.get('mode', 'normal')}
         )
         self.filter_form = FilterForm(data=request.POST or None, initial=initial,
-                                      email_filter=request.user.has_perm('helpdesk.view_customer'))
+                                      email_filter=request.user.has_perm('helpdesk.view_customer'),
+                                      view_assignees=request.user.has_perm('helpdesk.view_customer'))
         return super(HomeView, self).dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
