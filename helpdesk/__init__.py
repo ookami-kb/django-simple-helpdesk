@@ -66,6 +66,8 @@ class Filter(object):
             assignee = 'me'
         if assignee == 'me':
             filters['assignee'] = self.request.user
+        elif assignee != 'all':
+            filters['assignee__pk'] = assignee
 
         state = self.request.session.get('state', 'all')
         if state != 'all':
