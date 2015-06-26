@@ -7,11 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}helpdesk/css/ripples.min.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}helpdesk/css/material-wfont.min.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}helpdesk/css/jquery.dropdown.css?v1" rel="stylesheet">
-    <link href="{{ STATIC_URL }}helpdesk/css/custom.css?v3" rel="stylesheet">
-
+    <link href="{% static 'helpdesk/css/ripples.min.css' %}" rel="stylesheet">
+    <link href="{% static 'helpdesk/css/material-wfont.min.css' %}" rel="stylesheet">
+    <link href="{% static 'helpdesk/css/jquery.dropdown.css?v1' %}" rel="stylesheet">
+    <link href="{% static 'helpdesk/css/custom.css?v3' %}" rel="stylesheet">
 </head>
 
 <body>
@@ -39,10 +38,10 @@
 <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
-<script src="{{ STATIC_URL }}helpdesk/js/ripples.min.js"></script>
-<script src="{{ STATIC_URL }}helpdesk/js/material.min.js"></script>
-<script src="{{ STATIC_URL }}helpdesk/js/jquery.dropdown.js"></script>
-<script src="{{ STATIC_URL }}helpdesk/js/custom.js"></script>
+<script src="{% static 'helpdesk/js/ripples.min.js' %}"></script>
+<script src="{% static 'helpdesk/js/material.min.js' %}"></script>
+<script src="{% static 'helpdesk/js/jquery.dropdown.js' %}"></script>
+<script src="{% static 'helpdesk/js/custom.js' %}"></script>
 
 <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
 <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
