@@ -1,6 +1,9 @@
+{% load i18n %}
+{% language 'ru' %}
 <p>Hi {{ ticket.assignee.username }},</p>
 
 <p>
     {{ answer.author.username }} added new answer to ticket <a href="{{ ticket.get_full_url }}">{{ ticket.title }}</a>.
     Ticket state is now <strong>{{ ticket.state }}</strong>.
 </p>
+{% endlanguage %}
