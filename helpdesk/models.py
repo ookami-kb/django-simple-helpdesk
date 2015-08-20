@@ -1,7 +1,7 @@
 import base64
 import os
-from django.conf import settings
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
@@ -13,6 +13,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.template.loader import render_to_string
+
 from django.utils.safestring import mark_safe
 
 from helpdesk import SETTINGS
@@ -98,6 +99,13 @@ class Ticket(models.Model):
     updated = models.DateTimeField(auto_now=True)
     attachments = generic.GenericRelation(MailAttachment)
 
+    @property
+    def customer_user(self):
+        try:
+            return User.objects.get(email=self.customer)
+        except (User.DoesNotExist, User.MultipleObjectsReturned):
+            return None
+
     def reply(self, text, author=None, state='resolved'):
         answer = Comment.objects.create(
             ticket=self,
@@ -170,8 +178,8 @@ class Ticket(models.Model):
         else:
             color = 'danger'
         return mark_safe('<span class="label label-%s" title="%s">%s</span>' % (color,
-                                                                                 self.get_priority_display(),
-                                                                                 self.get_priority_display()[0]))
+                                                                                self.get_priority_display(),
+                                                                                self.get_priority_display()[0]))
 
     class Meta:
         permissions = (
