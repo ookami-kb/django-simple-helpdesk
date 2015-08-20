@@ -10,7 +10,7 @@ from helpdesk.models import State, Comment, Ticket, Project, HelpdeskProfile
 class ProfileChoiceField(ModelChoiceField):
     def label_from_instance(self, obj):
         label = obj.helpdeskprofile.label if hasattr(obj, 'helpdeskprofile') else None
-        return '%s (%s)' % (obj.first_name, label) if label else obj.first_name
+        return '%s (%s)' % (obj.get_full_name(), label) if label else obj.first_name
 
     def __init__(self, *args, **kwargs):
         queryset = User.objects.filter(groups__name='Helpdesk support').order_by('first_name')
