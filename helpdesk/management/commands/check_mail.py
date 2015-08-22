@@ -62,7 +62,7 @@ class Command(BaseCommand):
 
                 if initial is None:
                     ticket = Ticket.create(
-                        title=subject,
+                        title=subject[:255],
                         body=body,
                         customer=message.sent_from[0]['email'],
                         message_id=uid,
