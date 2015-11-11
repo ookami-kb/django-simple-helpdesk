@@ -1,10 +1,9 @@
-from ckeditor.fields import RichTextFormField
 from django import forms
+
 from django.contrib.auth.models import User
 from django.db.models import Count
 from django.forms import ModelChoiceField
-
-from helpdesk.models import State, Comment, Ticket, Project, HelpdeskProfile
+from helpdesk.models import State, Comment, Ticket, Project
 
 
 class ProfileChoiceField(ModelChoiceField):
@@ -19,7 +18,7 @@ class ProfileChoiceField(ModelChoiceField):
 
 class CommentForm(forms.ModelForm):
     state = forms.ModelChoiceField(State.objects.all(), widget=forms.RadioSelect, initial='resolved')
-    body = RichTextFormField()
+    body = forms.CharField(widget=forms.Textarea())
 
     def __init__(self, *args, **kwargs):
         super(CommentForm, self).__init__(*args, **kwargs)
@@ -80,7 +79,7 @@ class FilterForm(forms.Form):
 
 
 class TicketCreateForm(forms.ModelForm):
-    comment = RichTextFormField()
+    comment = forms.CharField(widget=forms.Textarea())
     assignee = ProfileChoiceField()
 
     class Meta:

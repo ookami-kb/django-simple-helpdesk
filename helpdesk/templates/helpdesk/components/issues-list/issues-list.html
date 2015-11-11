@@ -1,0 +1,62 @@
+<link rel="import" href="/static/materialdjango/components/bower_components/polymer/polymer.html">
+
+<dom-module id="issues-list">
+    <template>
+        <style>
+            .resolved {
+                color: gray;
+            }
+
+            .project-title {
+                font-size: small;
+            }
+
+            li {
+                padding-bottom: 16px;
+            }
+
+            .assignee {
+                display: inline-block;
+                padding: 4px;
+                border-radius: 2px;
+            }
+
+            .assignee--me {
+                color: white;
+                background: green;
+            }
+        </style>
+
+        <ol>
+            {% verbatim %}
+            <template is="dom-repeat" items="{{ issues }}">
+                <li class$="{{ computeClass(item.state.machine_name, item.priority) }}">
+                    <div class="issue-title">HD-<span>{{ item.id }}</span>: <span>{{ item.title }}</span></div>
+                    <div class="project-title">
+                        <span>{{ item.project }}</span>. Assigned to <span class$="{{ assigneeClass(item.assignee) }}">{{ item.assignee.full_name }}</span>.
+                    </div>
+                </li>
+            </template>
+            {% endverbatim %}
+        </ol>
+    </template>
+
+    <script>
+        var user_pk = {{ request.user.pk|default:0 }};
+        Polymer({
+            is: "issues-list",
+            ready: function () {
+                var that = this;
+                $.get('/helpdesk/api/v1/ticket/?format=json', function (response) {
+                    that.issues = response.objects;
+                });
+            },
+            computeClass: function (state, priority) {
+                return 'priority-' + priority + ' ' + state;
+            },
+            assigneeClass: function (assignee) {
+                return assignee.id == user_pk ? 'assignee assignee--me' : 'assignee';
+            }
+        });
+    </script>
+</dom-module>

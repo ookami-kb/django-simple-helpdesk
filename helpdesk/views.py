@@ -1,6 +1,5 @@
-# -*- encoding: utf-8 -*-
-from mimetypes import guess_type
 import time
+from mimetypes import guess_type
 
 from django.contrib.contenttypes.generic import generic_inlineformset_factory
 from django.core.urlresolvers import reverse
@@ -19,6 +18,11 @@ from helpdesk.signals import new_answer, ticket_updated
 
 class TestView(TemplateView):
     template_name = 'test.html'
+
+
+class ComponentView(TemplateView):
+    def get_template_names(self):
+        return 'helpdesk/components/{name}/{name}.html'.format(name=self.kwargs['component'])
 
 
 class HomeView(ListView):

@@ -100,6 +100,10 @@ class Ticket(models.Model):
     attachments = generic.GenericRelation(MailAttachment)
 
     @property
+    def project_title(self):
+        return self.project.title if self.project is not None else ''
+
+    @property
     def customer_user(self):
         try:
             return User.objects.get(email=self.customer)
