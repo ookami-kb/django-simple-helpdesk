@@ -243,8 +243,10 @@ def on_new_answer(sender, ticket, answer, **kwargs):
         try:
             ticket.notify_customer(subject, 'helpdesk/customer_answer.html',
                                    answer=answer, attachments=answer.attachments.all())
-        except:
+        except Exception as e:
+            print('Error sending email:', e)
             answer.notified = False
+            answer.state = State.objects.get(machine_name='open')
             answer.save()
 
 
