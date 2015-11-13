@@ -10,6 +10,6 @@ setup(
     author_email='ookami.kb@gmail.com',
     description='Simple HelpDesk for Django',
     packages=find_packages(),
-    install_requires=['django-bootstrap3', 'django-widget-tweaks', 'django-ckeditor'],
+    install_requires=['django-bootstrap3', 'django-widget-tweaks'],
     include_package_data=True,
 )
