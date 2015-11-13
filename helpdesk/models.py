@@ -246,8 +246,9 @@ def on_new_answer(sender, ticket, answer, **kwargs):
         except Exception as e:
             print('Error sending email:', e)
             answer.notified = False
-            answer.state = State.objects.get(machine_name='open')
             answer.save()
+            ticket.state = State.objects.get(machine_name='open')
+            ticket.save()
 
 
 class HistoryAction(models.Model):
