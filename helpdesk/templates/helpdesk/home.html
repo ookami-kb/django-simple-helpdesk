@@ -1,12 +1,26 @@
 {% extends 'helpdesk/html.html' %}
+{% load polymerdep %}
 
 {% load static %}
 
 {% block components %}
     <link rel="import" href="{% url 'helpdesk_component' 'issues-list' %}">
+    <link rel="import" href="{% url 'helpdesk_component' 'helpdesk-filters' %}">
+    {{ 'paper-dropdown-menu/paper-dropdown-menu.html'|dep }}
+    {{ 'paper-menu/paper-menu.html'|dep }}
+    {{ 'paper-item/paper-item.html'|dep }}
 {% endblock %}
 
 {% block body %}
+    <paper-dropdown-menu label="Your favourite pastry">
+        <paper-menu class="dropdown-content">
+            <paper-item>Croissant</paper-item>
+            <paper-item>Donut</paper-item>
+            <paper-item>Financier</paper-item>
+            <paper-item>Madeleine</paper-item>
+        </paper-menu>
+    </paper-dropdown-menu>
+
     <h2>Issues</h2>
 
     <issues-list></issues-list>
