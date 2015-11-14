@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 from setuptools import setup, find_packages
 
-version = '0.6.2'
+version = '0.6.4'
 
 setup(
     name='django-simple-helpdesk',
@@ -11,6 +11,6 @@ setup(
     description='Simple HelpDesk for Django',
     url='https://github.com/ookami-kb/django-simple-helpdesk',
     packages=find_packages(),
-    install_requires=['django-bootstrap3', 'django-widget-tweaks'],
+    install_requires=['django-bootstrap3', 'django-widget-tweaks', 'django-ckeditor'],
     include_package_data=True,
 )
