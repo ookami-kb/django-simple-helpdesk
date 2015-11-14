@@ -233,7 +233,7 @@ class AttachmentView(View):
             response['X-Sendfile'] = attachment.path.encode('utf-8')
             response['Content-Length'] = attachment.size
             response['Content-Type'] = guess_type(attachment.name.split('/')[-1])[0]
-            response['Content-Disposition'] = 'attachment; name=%s' % attachment.name.split('/')[-1]
+            response['Content-Disposition'] = 'attachment; filename=%s' % attachment.name.split('/')[-1]
             return response
         except BadSignature:
             raise Http404

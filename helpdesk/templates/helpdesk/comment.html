@@ -13,7 +13,7 @@
 
         <ol>
             {% for attachment in comment.attachments.all %}
-                <li><a href="{{ attachment.attachment.url }}">{{ attachment.filename }}</a>
+                <li><a href="{{ attachment.signed_url }}">{{ attachment.filename }}</a>
                     ({{ attachment.attachment.size|filesizeformat }})
                 </li>
             {% endfor %}
