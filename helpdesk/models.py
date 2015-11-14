@@ -245,10 +245,12 @@ def on_new_answer(sender, ticket, answer, **kwargs):
                                    answer=answer, attachments=answer.attachments.all())
         except Exception as e:
             print('Error sending email:', e)
+            import traceback
+            traceback.print_exc()
             answer.notified = False
-            answer.save()
             ticket.state = State.objects.get(machine_name='open')
-            ticket.save()
+
+            answer.save()
 
 
 class HistoryAction(models.Model):
