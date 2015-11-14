@@ -9,6 +9,7 @@ setup(
     author='Kirill Bubochkin',
     author_email='ookami.kb@gmail.com',
     description='Simple HelpDesk for Django',
+    url='https://github.com/ookami-kb/django-simple-helpdesk',
     packages=find_packages(),
     install_requires=['django-bootstrap3', 'django-widget-tweaks'],
     include_package_data=True,
