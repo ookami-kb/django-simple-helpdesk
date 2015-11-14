@@ -3,9 +3,10 @@ from mimetypes import guess_type
 import time
 
 from django.contrib.contenttypes.generic import generic_inlineformset_factory
+from django.core.signing import Signer, BadSignature
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils.http import urlencode
 from django.utils.timezone import now
@@ -223,11 +224,16 @@ class TicketView(DetailView):
 
 class AttachmentView(View):
     def dispatch(self, request, *args, **kwargs):
-        a = MailAttachment(attachment=kwargs['name'])
-        attachment = a.attachment
-        response = HttpResponse()
-        response['X-Sendfile'] = attachment.path.encode('utf-8')
-        # response['Content-Length'] = attachment.size
-        response['Content-Type'] = guess_type(attachment.name.split('/')[-1])[0]
-        response['Content-Disposition'] = 'attachment; name=%s' % attachment.name.split('/')[-1]
-        return response
+        try:
+            mid = Signer().unsign(kwargs['signature'])
+
+            a = get_object_or_404(MailAttachment, pk=mid)
+            attachment = a.attachment
+            response = HttpResponse()
+            response['X-Sendfile'] = attachment.path.encode('utf-8')
+            response['Content-Length'] = attachment.size
+            response['Content-Type'] = guess_type(attachment.name.split('/')[-1])[0]
+            response['Content-Disposition'] = 'attachment; name=%s' % attachment.name.split('/')[-1]
+            return response
+        except BadSignature:
+            raise Http404

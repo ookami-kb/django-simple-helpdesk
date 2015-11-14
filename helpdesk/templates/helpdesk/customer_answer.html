@@ -1,5 +1,20 @@
+{% load i18n %}
 {{ answer.body|safe }}
 
-<hr>
-{% if signature %}{{ signature|urlize|linebreaks }}{% endif %}
-<small>При ответе на это сообщение не меняйте, пожалуйста, тему письма.</small>
+{% language 'ru' %}
+    {% if attachments %}
+        <p><strong>Приложения:</strong></p>
+
+        <ol>
+            {% for attachment in attachments %}
+                <li><a href="{{ host }}{{ attachment.signed_url }}">{{ attachment.filename }}</a>
+                    ({{ attachment.attachment.size|filesizeformat }})
+                </li>
+            {% endfor %}
+        </ol>
+    {% endif %}
+
+    <hr>
+    {% if signature %}{{ signature|urlize|linebreaks }}{% endif %}
+    <small>При ответе на это сообщение не меняйте, пожалуйста, тему письма.</small>
+{% endlanguage %}

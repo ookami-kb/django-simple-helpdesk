@@ -8,6 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import get_current_site
 from django.core.files.storage import FileSystemStorage
 from django.core.mail import EmailMessage
+from django.core.signing import Signer
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save
@@ -80,6 +81,11 @@ class MailAttachment(models.Model):
     def filename(self):
         return os.path.basename(self.attachment.name)
 
+    @property
+    def signed_url(self):
+        signer = Signer()
+        return reverse('helpdesk_attachment', args=[signer.sign(self.pk)])
+
 
 class Ticket(models.Model):
     PRIORITIES = (
@@ -145,19 +151,15 @@ class Ticket(models.Model):
     def notify_customer(self, subject, template, **kwargs):
         data = {
             'ticket': self,
-            'signature': self.assignee.helpdeskprofile.signature if hasattr(self.assignee, 'helpdeskprofile') else None
+            'signature': self.assignee.helpdeskprofile.signature if hasattr(self.assignee, 'helpdeskprofile') else None,
+            'attachments': kwargs.get('attachments', []),
+            'host': SETTINGS['host']
         }
         data.update(kwargs)
         msg = EmailMessage(subject, render_to_string(template, data),
                            self.project.email if self.project else SETTINGS['from_email'],
                            [self.customer])
         msg.content_subtype = 'html'
-        for attachment in kwargs.get('attachments', []):
-            filename = os.path.basename(attachment.attachment.path)
-            filename = '=?UTF-8?B?{}?='.format(base64.b64encode(bytes(filename, encoding='utf-8')).decode('utf-8'))
-            with open(attachment.attachment.path, 'rb') as f:
-                content = f.read()
-            msg.attach(filename, content, None)
         msg.send(fail_silently=False)
 
     def get_absolute_url(self):

@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 from setuptools import setup, find_packages
 
-version = '0.5.12'
+version = '0.6.1'
 
 setup(
     name='django-simple-helpdesk',
