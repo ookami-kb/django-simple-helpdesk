@@ -1,1 +1,1 @@
-var helpdeskApp = angular.module('helpdeskApp', ['helpdeskControllers', 'helpdeskServices']);
+var helpdeskApp = angular.module('helpdeskApp', ['helpdeskControllers', 'helpdeskServices', 'helpdeskComponents']);

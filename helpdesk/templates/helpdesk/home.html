@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-    <div class="mdl-grid">
+    <div class="mdl-grid container">
         <div class="mdl-cell mdl-cell--12-col">
             <form action="#">
                 <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -14,10 +14,18 @@
 
             {% verbatim %}
             <p>
-                Show all tickets where assignee is <strong>{{ assignee }}</strong> and state is
+                Show all tickets where assignee is <strong>{{ assignee }}</strong>, state is
+
                 <select ng-model="stateFilter">
                     <option ng-repeat="state in states" value="{{ state.machine_name }}">{{ state.title }}</option>
-                </select>. Order by <select ng-model="orderProp">
+                </select> and project is
+
+                <select ng-model="projectFilter">
+                    <option ng-repeat="project in projects" value="{{ project.machine_name }}">{{ project.title }}
+                    </option>
+                </select>.
+
+                Order by <select ng-model="orderProp">
                 <option value="-priority">Priority</option>
                 <option value="-updated">Update time</option>
                 <option value="title">Title</option>
@@ -25,21 +33,17 @@
             </p>
             {% endverbatim %}
 
-            <ol>
-                {% verbatim %}
-                <li ng-repeat="ticket in tickets" class="state--{{ ticket.state.machine_name }}">
-                    <a href="{{ ticket.resource_uri }}">HD-{{ ticket.id }}</a>
+            {% verbatim %}
+            <issue-card ng-repeat="ticket in tickets">
+                <a href="{{ ticket.resource_uri }}"> HD-{{ ticket.id }} <span>{{ ticket.title }}</span> </a>
 
-                    <p>{{ ticket.title }}</p>
-
-                    <p>
-                        Assigned to <span class="label label--info">{{ ticket.assignee.full_name }}</span>. Updated on
-                        <strong>{{ ticket.updated | date:'short' }}</strong>. <span class="label label--info"
-                                                                                    ng-if="ticket.customer">{{ ticket.customer }}</span>
-                    </p>
-                </li>
-                {% endverbatim %}
-            </ol>
+                <p>
+                    Assigned to <span class="label label--info">{{ ticket.assignee.full_name }}</span>. Updated on
+                    <strong>{{ ticket.updated | date:'short' }}</strong>. <span class="label label--info"
+                                                                                ng-if="ticket.customer">{{ ticket.customer }}</span>
+                </p>
+            </issue-card>
+            {% endverbatim %}
 
         </div>
     </div>

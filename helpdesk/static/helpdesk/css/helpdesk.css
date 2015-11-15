@@ -1,3 +1,6 @@
+body {
+  background: #F5F5F5; }
+
 .label {
   padding: 2px 4px;
   display: inline-block;
@@ -8,5 +11,14 @@
 
 .state--resolved {
   color: #999; }
+
+.card-issue {
+  width: 100%;
+  min-height: 0; }
+  .card-issue__content {
+    padding: 16px; }
+
+.container {
+  max-width: 960px; }
 
 /*# sourceMappingURL=helpdesk.css.map */

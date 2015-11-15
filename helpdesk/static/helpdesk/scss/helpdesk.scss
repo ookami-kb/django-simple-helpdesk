@@ -1,5 +1,9 @@
 @import "colors";
 
+body {
+  background: $grey-100;
+}
+
 .label {
   padding: 2px 4px;
   display: inline-block;
@@ -15,4 +19,17 @@
   &--resolved {
     color: $muted;
   }
+}
+
+.card-issue {
+  width: 100%;
+  min-height: 0;
+
+  &__content {
+    padding: 16px;
+  }
+}
+
+.container {
+  max-width: 960px;
 }

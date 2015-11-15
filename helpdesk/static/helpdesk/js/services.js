@@ -23,3 +23,15 @@ helpdeskServices.factory('State', ['$resource', function ($resource) {
         }
     });
 }]);
+
+helpdeskServices.factory('Project', ['$resource', function($resource) {
+    return $resource('/helpdesk/api/v1/project', {}, {
+        query: {
+            method: 'GET',
+            isArray: false,
+            params: {
+                format: 'json'
+            }
+        }
+    });
+}]);

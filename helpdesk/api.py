@@ -3,7 +3,7 @@ from tastypie import fields
 from tastypie.constants import ALL_WITH_RELATIONS
 from tastypie.resources import ModelResource
 
-from helpdesk.models import Ticket, State
+from helpdesk.models import Ticket, State, Project
 
 
 class StateResource(ModelResource):
@@ -19,9 +19,15 @@ class AssigneeResource(ModelResource):
         fields = ['id']
 
 
+class ProjectResource(ModelResource):
+    class Meta:
+        queryset = Project.objects.all()
+        fields = ['machine_name', 'title']
+
+
 class TicketResource(ModelResource):
     state = fields.ForeignKey(StateResource, 'state', full=True)
-    project = fields.CharField('project_title')
+    project = fields.ForeignKey(ProjectResource, 'project', full=True)
     assignee = fields.ForeignKey(AssigneeResource, 'assignee', full=True)
 
     class Meta:
@@ -29,9 +35,6 @@ class TicketResource(ModelResource):
         resource_name = 'ticket'
         ordering = ['priority', 'updated', 'title']
         excludes = ['body']
-        filtering = {
-            'state': ALL_WITH_RELATIONS,
-        }
 
     def dehydrate_customer(self, bundle):
         if not bundle.request.user.has_perm('helpdesk.view_customer'):
@@ -44,7 +47,9 @@ class TicketResource(ModelResource):
 
         orm_filters = super().build_filters(filters)
 
-        if 'state' in filters:
-            orm_filters['state__machine_name'] = filters['state']
+        if 'st' in filters:
+            orm_filters['state__machine_name'] = filters['st']
+        if 'prj' in filters:
+            orm_filters['project__machine_name'] = filters['prj']
 
         return orm_filters
