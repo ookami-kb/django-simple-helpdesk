@@ -2,34 +2,47 @@
 {% load static %}
 
 {% block content %}
-    <form action="#">
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="sample3" ng-model="query">
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col">
+            <form action="#">
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" type="text" id="sample3" ng-model="query">
 
-            <label class="mdl-textfield__label" for="sample3">Text...</label>
-        </div>
+                    <label class="mdl-textfield__label" for="sample3">Text...</label>
+                </div>
+            </form>
 
-        <select ng-model="orderProp">
-            <option value="-priority">Priority</option>
-            <option value="-updated">Update time</option>
-            <option value="title">Title</option>
-        </select>
-    </form>
-
-    <ol>
-        {% verbatim %}
-        <li ng-repeat="ticket in tickets" class="state--{{ ticket.state.machine_name }}">
-            <a href="{{ ticket.resource_uri }}">HD-{{ ticket.id }}</a>
-
-            <p>{{ ticket.title }}</p>
-
+            {% verbatim %}
             <p>
-                Assigned to <span class="label label--info">{{ ticket.assignee.full_name }}</span>. Updated on
-                <strong>{{ ticket.updated | date:'short' }}</strong>
+                Show all tickets where assignee is <strong>{{ assignee }}</strong> and state is
+                <select ng-model="stateFilter">
+                    <option ng-repeat="state in states" value="{{ state.machine_name }}">{{ state.title }}</option>
+                </select>. Order by <select ng-model="orderProp">
+                <option value="-priority">Priority</option>
+                <option value="-updated">Update time</option>
+                <option value="title">Title</option>
+            </select>
             </p>
-        </li>
-        {% endverbatim %}
-    </ol>
+            {% endverbatim %}
+
+            <ol>
+                {% verbatim %}
+                <li ng-repeat="ticket in tickets" class="state--{{ ticket.state.machine_name }}">
+                    <a href="{{ ticket.resource_uri }}">HD-{{ ticket.id }}</a>
+
+                    <p>{{ ticket.title }}</p>
+
+                    <p>
+                        Assigned to <span class="label label--info">{{ ticket.assignee.full_name }}</span>. Updated on
+                        <strong>{{ ticket.updated | date:'short' }}</strong>. <span class="label label--info"
+                                                                                    ng-if="ticket.customer">{{ ticket.customer }}</span>
+                    </p>
+                </li>
+                {% endverbatim %}
+            </ol>
+
+        </div>
+    </div>
     {#    <div class="row">#}
     {#        <div class="col-sm-4 col-sm-push-8">#}
     {#            <div class="panel panel-primary">#}
