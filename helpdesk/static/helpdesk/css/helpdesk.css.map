@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAEA,MAAO;EACL,OAAO,EAAE,OAAO;EAChB,OAAO,EAAE,YAAY;EACrB,aAAa,EAAE,GAAG;EAElB,YAAQ;IACN,KAAK,EAAE,KAAK;IACZ,UAAU,ECTD,OAAO;;ADclB,gBAAY;EACV,KAAK,ECdD,IAAI",
+"sources": ["../scss/helpdesk.scss","../scss/_colors.scss"],
+"names": [],
+"file": "helpdesk.css"
+}

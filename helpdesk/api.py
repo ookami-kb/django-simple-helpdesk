@@ -26,3 +26,4 @@ class TicketResource(ModelResource):
     class Meta:
         queryset = Ticket.objects.all()
         resource_name = 'ticket'
+        ordering = ['priority', 'updated', 'title']

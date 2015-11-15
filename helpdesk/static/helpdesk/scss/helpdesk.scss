@@ -1,0 +1,18 @@
+@import "colors";
+
+.label {
+  padding: 2px 4px;
+  display: inline-block;
+  border-radius: 2px;
+
+  &--info {
+    color: white;
+    background: $indigo-500;
+  }
+}
+
+.state {
+  &--resolved {
+    color: $muted;
+  }
+}

@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+BASE_DIR = os.path.dirname(__file__)
 
 try:
     from local_settings import *
@@ -36,7 +36,6 @@ INSTALLED_APPS = (
 
     'helpdesk',
     'widget_tweaks',
-    'materialdjango',
     'tastypie',
 )
 
@@ -59,7 +58,7 @@ WSGI_APPLICATION = 'wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'helpdesk/db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -93,6 +92,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.contrib.messages.context_processors.messages',
     'django.core.context_processors.request',
+)
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "node_modules"),
 )
 
 LOGGING = {

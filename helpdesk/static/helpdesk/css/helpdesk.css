@@ -1,0 +1,12 @@
+.label {
+  padding: 2px 4px;
+  display: inline-block;
+  border-radius: 2px; }
+  .label--info {
+    color: white;
+    background: #3F51B5; }
+
+.state--resolved {
+  color: #999; }
+
+/*# sourceMappingURL=helpdesk.css.map */

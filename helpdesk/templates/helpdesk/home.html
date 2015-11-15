@@ -1,67 +1,70 @@
 {% extends 'helpdesk/html.html' %}
-{% load polymerdep %}
-
 {% load static %}
 
-{% block components %}
-    <link rel="import" href="{% url 'helpdesk_component' 'issues-list' %}">
-    <link rel="import" href="{% url 'helpdesk_component' 'helpdesk-filters' %}">
-    {{ 'paper-dropdown-menu/paper-dropdown-menu.html'|dep }}
-    {{ 'paper-menu/paper-menu.html'|dep }}
-    {{ 'paper-item/paper-item.html'|dep }}
+{% block content %}
+    <form action="#">
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="sample3" ng-model="query">
+
+            <label class="mdl-textfield__label" for="sample3">Text...</label>
+        </div>
+
+        <select ng-model="orderProp">
+            <option value="-priority">Priority</option>
+            <option value="-updated">Update time</option>
+            <option value="title">Title</option>
+        </select>
+    </form>
+
+    <ol>
+        {% verbatim %}
+        <li ng-repeat="ticket in tickets" class="state--{{ ticket.state.machine_name }}">
+            <a href="{{ ticket.resource_uri }}">HD-{{ ticket.id }}</a>
+
+            <p>{{ ticket.title }}</p>
+
+            <p>
+                Assigned to <span class="label label--info">{{ ticket.assignee.full_name }}</span>. Updated on
+                <strong>{{ ticket.updated | date:'short' }}</strong>
+            </p>
+        </li>
+        {% endverbatim %}
+    </ol>
+    {#    <div class="row">#}
+    {#        <div class="col-sm-4 col-sm-push-8">#}
+    {#            <div class="panel panel-primary">#}
+    {#                <div class="panel-heading">#}
+    {#                    <h3 class="panel-title">Filters</h3>#}
+    {#                </div>#}
+    {#                <div class="panel-body">#}
+    {#                    <form method="post">#}
+    {#                        {% csrf_token %}#}
+    {#                        {% bootstrap_form filter_form %}#}
+    {#                        {% bootstrap_button 'Apply' button_type='submit' %}#}
+    {#                    </form>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#        <div class="col-sm-8 col-sm-pull-4">#}
+    {#            <div class="row">#}
+    {#                <div class="col-xs-12">#}
+    {#                    <form class="row search-form">#}
+    {#                        <div class="col-lg-8 col-xs-6">#}
+    {#                            {% bootstrap_field search_form.search layout='inline' %}#}
+    {#                        </div>#}
+    {#                        <div class="col-lg-2 col-xs-3">#}
+    {#                            {% bootstrap_button 'Search' button_type='submit' button_class='btn-xs btn-block' %}#}
+    {#                        </div>#}
+    {#                        <div class="col-lg-2 col-xs-3">#}
+    {#                            <a href="?" class="btn btn-xs btn-default">Reset</a>#}
+    {#                        </div>#}
+    {#                    </form>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#            {% include list_template %}#}
+    {#            <div class="text-center">#}
+    {#                {% bootstrap_pagination page_obj extra=extra %}#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </div>#}
 {% endblock %}
-
-{% block body %}
-    <paper-dropdown-menu label="Your favourite pastry">
-        <paper-menu class="dropdown-content">
-            <paper-item>Croissant</paper-item>
-            <paper-item>Donut</paper-item>
-            <paper-item>Financier</paper-item>
-            <paper-item>Madeleine</paper-item>
-        </paper-menu>
-    </paper-dropdown-menu>
-
-    <h2>Issues</h2>
-
-    <issues-list></issues-list>
-{% endblock %}
-
-{#{% block content %}#}
-{#    <div class="row">#}
-{#        <div class="col-sm-4 col-sm-push-8">#}
-{#            <div class="panel panel-primary">#}
-{#                <div class="panel-heading">#}
-{#                    <h3 class="panel-title">Filters</h3>#}
-{#                </div>#}
-{#                <div class="panel-body">#}
-{#                    <form method="post">#}
-{#                        {% csrf_token %}#}
-{#                        {% bootstrap_form filter_form %}#}
-{#                        {% bootstrap_button 'Apply' button_type='submit' %}#}
-{#                    </form>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-{#        <div class="col-sm-8 col-sm-pull-4">#}
-{#            <div class="row">#}
-{#                <div class="col-xs-12">#}
-{#                    <form class="row search-form">#}
-{#                        <div class="col-lg-8 col-xs-6">#}
-{#                            {% bootstrap_field search_form.search layout='inline' %}#}
-{#                        </div>#}
-{#                        <div class="col-lg-2 col-xs-3">#}
-{#                            {% bootstrap_button 'Search' button_type='submit' button_class='btn-xs btn-block' %}#}
-{#                        </div>#}
-{#                        <div class="col-lg-2 col-xs-3">#}
-{#                            <a href="?" class="btn btn-xs btn-default">Reset</a>#}
-{#                        </div>#}
-{#                    </form>#}
-{#                </div>#}
-{#            </div>#}
-{#            {% include list_template %}#}
-{#            <div class="text-center">#}
-{#                {% bootstrap_pagination page_obj extra=extra %}#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{#{% endblock %}#}
