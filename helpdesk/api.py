@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
 from tastypie import fields
-from tastypie.constants import ALL_WITH_RELATIONS
 from tastypie.resources import ModelResource
 
 from helpdesk.models import Ticket, State, Project
@@ -47,9 +46,11 @@ class TicketResource(ModelResource):
 
         orm_filters = super().build_filters(filters)
 
-        if 'st' in filters:
-            orm_filters['state__machine_name'] = filters['st']
-        if 'prj' in filters:
-            orm_filters['project__machine_name'] = filters['prj']
+        if 'filter_state' in filters:
+            orm_filters['state__machine_name'] = filters['filter_state']
+        if 'filter_project' in filters:
+            orm_filters['project__machine_name'] = filters['filter_project']
+        if 'filter_assignee' in filters:
+            orm_filters['assignee__id'] = filters['filter__assignee']
 
         return orm_filters

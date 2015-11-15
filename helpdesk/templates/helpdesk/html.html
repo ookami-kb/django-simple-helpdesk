@@ -13,6 +13,12 @@
 
     <link rel="stylesheet" href="{% static 'helpdesk/css/helpdesk.css' %}"/>
 
+    <script>
+        var ME = {
+            id: {{ request.user.pk }},
+            full_name: 'me ({{ request.user.get_full_name }})'
+        };
+    </script>
     <script src="{% static 'angular/angular.js' %}"></script>
     <script src="{% static 'angular-resource/angular-resource.js' %}"></script>
     <script src="{% static 'helpdesk/js/app.js' %}"></script>

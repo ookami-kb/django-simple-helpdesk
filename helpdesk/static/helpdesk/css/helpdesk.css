@@ -9,12 +9,27 @@ body {
     color: white;
     background: #3F51B5; }
 
+.state--resolved:before, .state--open:before {
+  position: absolute;
+  display: block;
+  content: '';
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px; }
+
 .state--resolved {
-  color: #999; }
+  color: #9E9E9E; }
+  .state--resolved:before {
+    background: #4CAF50; }
+
+.state--open:before {
+  background: #F44336; }
 
 .card-issue {
   width: 100%;
-  min-height: 0; }
+  min-height: 0;
+  position: relative; }
   .card-issue__content {
     padding: 16px; }
 

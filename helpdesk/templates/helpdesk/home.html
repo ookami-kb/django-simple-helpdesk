@@ -14,7 +14,11 @@
 
             {% verbatim %}
             <p>
-                Show all tickets where assignee is <strong>{{ assignee }}</strong>, state is
+                Show all tickets where assignee is
+
+                <select ng-model="assigneeFilter">
+                    <option ng-repeat="assignee in assignees" value="{{ assignee.id }}">{{ assignee.full_name }}</option>
+                </select>, state is
 
                 <select ng-model="stateFilter">
                     <option ng-repeat="state in states" value="{{ state.machine_name }}">{{ state.title }}</option>
@@ -34,7 +38,7 @@
             {% endverbatim %}
 
             {% verbatim %}
-            <issue-card ng-repeat="ticket in tickets">
+            <issue-card ng-repeat="ticket in tickets" state="{{ ticket.state.machine_name }}">
                 <a href="{{ ticket.resource_uri }}"> HD-{{ ticket.id }} <span>{{ ticket.title }}</span> </a>
 
                 <p>

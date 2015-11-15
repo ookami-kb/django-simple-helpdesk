@@ -1,17 +1,18 @@
 var helpdeskControllers = angular.module('helpdeskControllers', []);
 
-helpdeskControllers.controller('TicketListController', ['$scope', 'Ticket', 'State', 'Project',
-    function ($scope, Ticket, State, Project) {
+helpdeskControllers.controller('TicketListController', ['$scope', 'Ticket', 'State', 'Project', 'Assignee',
+    function ($scope, Ticket, State, Project, Assignee) {
+        $scope.ME = ME;
 
         function updateTicketList() {
             var params = {
                 order_by: $scope.orderProp
             };
             if ($scope.stateFilter) {
-                params['st'] = $scope.stateFilter;
+                params['filter_state'] = $scope.stateFilter;
             }
             if ($scope.projectFilter) {
-                params['prj'] = $scope.projectFilter;
+                params['filter_project'] = $scope.projectFilter;
             }
             var response = Ticket.query(params, function () {
                 $scope.tickets = response.objects;
@@ -38,6 +39,17 @@ helpdeskControllers.controller('TicketListController', ['$scope', 'Ticket', 'Sta
             });
         }
 
+        function updateAssigneeList() {
+            var response = Assignee.query(function () {
+                $scope.assignees = response.objects;
+                $scope.assignees.unshift($scope.ME);
+                $scope.assignees.unshift({
+                    id: null,
+                    full_name: 'any'
+                });
+            });
+        }
+
         $scope.customerLabel = function (ticket) {
             if (ticket.customer) {
                 return '<strong>' + ticket.customer + '</strong>';
@@ -60,4 +72,8 @@ helpdeskControllers.controller('TicketListController', ['$scope', 'Ticket', 'Sta
         updateProjectList();
         $scope.projectFilter = null;
         $scope.$watch('projectFilter', updateTicketList);
+
+        updateAssigneeList();
+        $scope.assigneeFilter = null;
+        $scope.$watch('assigneeFilter', updateTicketList);
     }]);

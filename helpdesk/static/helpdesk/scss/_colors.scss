@@ -1,4 +1,14 @@
 $indigo-500: #3F51B5;
+
+$grey-500: #9E9E9E;
 $grey-200: #EEEEEE;
 $grey-100: #F5F5F5;
-$muted: #999;
+
+$red-500: #F44336;
+
+$green-500: #4CAF50;
+
+
+$muted: $grey-500;
+$state-open: $red-500;
+$state-resolved: $green-500;

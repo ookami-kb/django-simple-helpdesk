@@ -15,15 +15,32 @@ body {
   }
 }
 
-.state {
-  &--resolved {
-    color: $muted;
+.state--resolved:before, .state--open:before {
+  position: absolute;
+  display: block;
+  content: '';
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+}
+
+.state--resolved {
+  color: $muted;
+
+  &:before {
+    background: $state-resolved;
   }
+}
+
+.state--open:before {
+  background: $state-open;
 }
 
 .card-issue {
   width: 100%;
   min-height: 0;
+  position: relative;
 
   &__content {
     padding: 16px;
