@@ -19,7 +19,11 @@
             full_name: 'me ({{ request.user.get_full_name }})'
         };
     </script>
+
+    {% block init %}{% endblock %}
+
     <script src="{% static 'angular/angular.js' %}"></script>
+    <script src="{% static 'angular-sanitize/angular-sanitize.js' %}"></script>
     <script src="{% static 'angular-resource/angular-resource.js' %}"></script>
     <script src="{% static 'helpdesk/js/app.js' %}"></script>
     <script src="{% static 'helpdesk/js/services.js' %}"></script>
@@ -30,7 +34,7 @@
     {% block title %}<title>HelpDesk</title> {% endblock %}
 </head>
 
-<body ng-controller="TicketListController">
+<body>
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
     <header class="mdl-layout__header">
         <div class="mdl-layout__header-row">

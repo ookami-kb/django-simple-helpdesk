@@ -1,7 +1,19 @@
 var helpdeskServices = angular.module('helpdeskServices', ['ngResource']);
 
-helpdeskServices.factory('Ticket', ['$resource', function ($resource) {
+helpdeskServices.factory('TicketList', ['$resource', function ($resource) {
     return $resource('/helpdesk/api/v1/ticket/', {}, {
+        query: {
+            method: 'GET',
+            isArray: false,
+            params: {
+                format: 'json'
+            }
+        }
+    });
+}]);
+
+helpdeskServices.factory('Ticket', ['$resource', function ($resource) {
+    return $resource('/helpdesk/api/v1/ticket/:ticketId/', {}, {
         query: {
             method: 'GET',
             isArray: false,

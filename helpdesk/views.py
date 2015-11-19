@@ -222,6 +222,7 @@ class TicketView(DetailView):
         context['history'] = self.object.historyaction_set.all().order_by('-created')
         context['attachments'] = self.object.attachments.all()
         context['attachment_formset'] = self.attachment_formset
+        context['ticketId'] = self.object.pk
         return context
 
 

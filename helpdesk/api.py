@@ -33,7 +33,6 @@ class TicketResource(ModelResource):
         queryset = Ticket.objects.all()
         resource_name = 'ticket'
         ordering = ['priority', 'updated', 'title']
-        excludes = ['body']
 
     def dehydrate_customer(self, bundle):
         if not bundle.request.user.has_perm('helpdesk.view_customer'):

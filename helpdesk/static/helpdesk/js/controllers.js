@@ -1,7 +1,7 @@
-var helpdeskControllers = angular.module('helpdeskControllers', []);
+var helpdeskControllers = angular.module('helpdeskControllers', ['ngSanitize']);
 
-helpdeskControllers.controller('TicketListController', ['$scope', 'Ticket', 'State', 'Project', 'Assignee',
-    function ($scope, Ticket, State, Project, Assignee) {
+helpdeskControllers.controller('TicketListController', ['$scope', 'TicketList', 'State', 'Project', 'Assignee',
+    function ($scope, TicketList, State, Project, Assignee) {
         $scope.ME = ME;
 
         function updateTicketList() {
@@ -14,7 +14,7 @@ helpdeskControllers.controller('TicketListController', ['$scope', 'Ticket', 'Sta
             if ($scope.projectFilter) {
                 params['filter_project'] = $scope.projectFilter;
             }
-            var response = Ticket.query(params, function () {
+            var response = TicketList.query(params, function () {
                 $scope.tickets = response.objects;
             });
         }
@@ -77,3 +77,15 @@ helpdeskControllers.controller('TicketListController', ['$scope', 'Ticket', 'Sta
         $scope.assigneeFilter = null;
         $scope.$watch('assigneeFilter', updateTicketList);
     }]);
+
+
+helpdeskControllers.controller('TicketController', ['$scope', 'Ticket', function ($scope, Ticket) {
+    $scope.ME = ME;
+
+    function updateTicket() {
+        console.log($scope.ticketId);
+        $scope.ticket = Ticket.query({ticketId: $scope.ticketId});
+    }
+
+    updateTicket();
+}]);

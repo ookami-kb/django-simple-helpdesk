@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-    <div class="mdl-grid container">
+    <div class="mdl-grid container" ng-controller="TicketListController">
         <div class="mdl-cell mdl-cell--12-col">
             <form action="#">
                 <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -39,7 +39,7 @@
 
             {% verbatim %}
             <issue-card ng-repeat="ticket in tickets" state="{{ ticket.state.machine_name }}">
-                <a href="{{ ticket.resource_uri }}"> HD-{{ ticket.id }} <span>{{ ticket.title }}</span> </a>
+                <a href="tickets/{{ ticket.id }}/"> HD-{{ ticket.id }} <span>{{ ticket.title }}</span> </a>
 
                 <p>
                     Assigned to <span class="label label--info">{{ ticket.assignee.full_name }}</span>. Updated on
