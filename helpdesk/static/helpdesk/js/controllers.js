@@ -86,6 +86,13 @@ helpdeskControllers.controller('TicketController', ['$scope', 'Ticket', 'Comment
         $scope.ticket = Ticket.query({ticketId: $scope.ticketId});
     }
 
+    $scope.patchTicketPriority = function (value) {
+        console.log('patch');
+        Ticket.patch({ticketId: $scope.ticketId}, {priority: parseInt(value)}, function () {
+            updateTicket();
+        });
+    };
+
     function updateComments() {
         var response = Comment.query({
             filter_ticket: $scope.ticketId

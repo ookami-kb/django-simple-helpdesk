@@ -13,13 +13,16 @@ helpdeskServices.factory('TicketList', ['$resource', function ($resource) {
 }]);
 
 helpdeskServices.factory('Ticket', ['$resource', function ($resource) {
-    return $resource('/helpdesk/api/v1/ticket/:ticketId/', {}, {
+    return $resource('/helpdesk/api/v1/ticket/:ticketId/', {ticketId: '@ticketId'}, {
         query: {
             method: 'GET',
             isArray: false,
             params: {
                 format: 'json'
             }
+        },
+        patch: {
+            method: 'PATCH'
         }
     });
 }]);

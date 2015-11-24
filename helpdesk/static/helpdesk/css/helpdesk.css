@@ -4,12 +4,23 @@ body {
   font-family: 'PT Sans', sans-serif; }
 
 .label {
-  padding: 2px 4px;
+  padding: 0 4px;
   display: inline-block;
   border-radius: 2px; }
   .label--info {
     color: white;
     background: #3F51B5; }
+  .label--priority-1 {
+    background: #3F51B5;
+    color: white; }
+  .label--priority-0 {
+    background: #EEEEEE; }
+  .label--priority-2 {
+    background: #F44336;
+    color: white; }
+
+.info-label {
+  margin-right: 8px; }
 
 .state--resolved:before, .state--open:before {
   position: absolute;

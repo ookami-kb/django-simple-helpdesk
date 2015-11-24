@@ -182,15 +182,7 @@ class Ticket(models.Model):
 
     @property
     def priority_label(self):
-        if self.priority == 0:
-            color = 'default'
-        elif self.priority == 1:
-            color = 'info'
-        else:
-            color = 'danger'
-        return mark_safe('<span class="label label-%s" title="%s">%s</span>' % (color,
-                                                                                self.get_priority_display(),
-                                                                                self.get_priority_display()[0]))
+        return self.get_priority_display()
 
     class Meta:
         permissions = (

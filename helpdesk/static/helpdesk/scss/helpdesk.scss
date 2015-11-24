@@ -8,7 +8,7 @@ body {
 }
 
 .label {
-  padding: 2px 4px;
+  padding: 0 4px;
   display: inline-block;
   border-radius: 2px;
 
@@ -16,6 +16,26 @@ body {
     color: white;
     background: $indigo-500;
   }
+
+  &--priority {
+    &-1 {
+      background: $indigo-500;
+      color: white;
+    }
+
+    &-0 {
+      background: $grey-200;
+    }
+
+    &-2 {
+      background: $red-500;
+      color: white;
+    }
+  }
+}
+
+.info-label {
+  margin-right: 8px;
 }
 
 .state--resolved:before, .state--open:before {

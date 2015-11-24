@@ -11,7 +11,23 @@
                     <p class="comment__title">{{ ticket.customer_name || 'Client' }} <span class="comment__email">{{ ticket.customer }}</span>
                     </p>
 
-                    <p class="comment__info">{{ ticket.updated | date:'short' }}</p>
+                    <p class="comment__info">
+                        <span class="info-label">{{ ticket.updated | date:'short' }}</span>
+
+                        <span class="label info-label label--priority-{{ ticket.priority }}">
+                            Priority:
+
+                            <select ng-model="ticket.priority_value" ng-change="patchTicketPriority(ticket.priority_value)">
+                                <option value="0">Low</option>
+                                <option value="1">Normal</option>
+                                <option value="2">High</option>
+                            </select>
+                        </span>
+
+                        <span class="info-label label label--info">Project: {{ ticket.project.title }}</span>
+
+                        <span class="info-label label label--info">Assignee: {{ ticket.assignee.full_name }}</span>
+                    </p>
 
                     <div ng-bind-html="ticket.body"></div>
                 </div>

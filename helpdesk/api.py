@@ -29,11 +29,14 @@ class TicketResource(ModelResource):
     project = fields.ForeignKey(ProjectResource, 'project', full=True)
     assignee = fields.ForeignKey(AssigneeResource, 'assignee', full=True)
     customer_name = fields.CharField('customer_name', null=True)
+    priority_label = fields.CharField('priority_label')
+    priority_value = fields.CharField('priority')
 
     class Meta:
         queryset = Ticket.objects.all()
         resource_name = 'ticket'
         ordering = ['priority', 'updated', 'title']
+        always_return_data = True
 
     def dehydrate_customer(self, bundle):
         if not bundle.request.user.has_perm('helpdesk.view_customer'):
