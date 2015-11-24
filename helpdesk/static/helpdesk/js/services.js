@@ -59,3 +59,15 @@ helpdeskServices.factory('Assignee', ['$resource', function($resource) {
         }
     });
 }]);
+
+helpdeskServices.factory('Comment', ['$resource', function($resource) {
+    return $resource('/helpdesk/api/v1/comment', {}, {
+        query: {
+            method: 'GET',
+            isArray: false,
+            params: {
+                format: 'json'
+            }
+        }
+    });
+}]);

@@ -2,7 +2,7 @@ from django.conf.urls import url, include
 from django.contrib.auth.decorators import permission_required, login_required
 from tastypie.api import Api
 
-from helpdesk.api import TicketResource, StateResource, AssigneeResource, ProjectResource
+from helpdesk.api import TicketResource, StateResource, AssigneeResource, ProjectResource, CommentResource
 from helpdesk.views import HomeView, TicketView, EmailView, CommentEmailView, TicketCreateView, AttachmentView, \
     ComponentView
 
@@ -11,6 +11,7 @@ v1_api.register(StateResource())
 v1_api.register(AssigneeResource())
 v1_api.register(TicketResource())
 v1_api.register(ProjectResource())
+v1_api.register(CommentResource())
 
 urlpatterns = [
     url(r'^$', permission_required('helpdesk.view_tickets')(HomeView.as_view()), name='helpdesk_home'),

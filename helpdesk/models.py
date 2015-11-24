@@ -110,6 +110,13 @@ class Ticket(models.Model):
         except (User.DoesNotExist, User.MultipleObjectsReturned):
             return None
 
+    @property
+    def customer_name(self):
+        user = self.customer_user
+        if user is None:
+            return None
+        return user.get_full_name()
+
     def reply(self, text, author=None, state='resolved'):
         answer = Comment.objects.create(
             ticket=self,

@@ -1,5 +1,7 @@
+@import url(https://fonts.googleapis.com/css?family=PT+Sans:400,700&subset=latin,cyrillic);
 body {
-  background: #F5F5F5; }
+  background: #F5F5F5;
+  font-family: 'PT Sans', sans-serif; }
 
 .label {
   padding: 2px 4px;
@@ -30,8 +32,32 @@ body {
   width: 100%;
   min-height: 0;
   position: relative; }
-  .card-issue__content {
+  .card-issue__content, .card-issue__ticket, .card-issue__comment {
     padding: 16px; }
+
+.ticket__title {
+  margin-top: 0;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1.3; }
+
+.ticket__id {
+  color: #3F51B5; }
+
+.comment--user {
+  background: #E8EAF6; }
+
+.comment__title {
+  font-weight: bold;
+  margin: 0; }
+
+.comment__email {
+  font-weight: normal;
+  color: #9E9E9E; }
+
+.comment__info {
+  font-size: small;
+  color: #9E9E9E; }
 
 .container {
   max-width: 960px; }

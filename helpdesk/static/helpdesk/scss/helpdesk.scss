@@ -1,7 +1,10 @@
 @import "colors";
 
+@import url(https://fonts.googleapis.com/css?family=PT+Sans:400,700&subset=latin,cyrillic);
+
 body {
   background: $grey-100;
+  font-family: 'PT Sans', sans-serif;
 }
 
 .label {
@@ -45,6 +48,44 @@ body {
   &__content {
     padding: 16px;
   }
+}
+
+.card-issue__ticket {
+  @extend .card-issue__content;
+}
+
+.card-issue__comment {
+  @extend  .card-issue__content;
+}
+
+.ticket__title {
+  margin-top: 0;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1.3;
+}
+
+.ticket__id {
+  color: $indigo-500;
+}
+
+.comment--user {
+  background: $indigo-50;
+}
+
+.comment__title {
+  font-weight: bold;
+  margin: 0;
+}
+
+.comment__email {
+  font-weight: normal;
+  color: $grey-500;
+}
+
+.comment__info {
+  font-size: small;
+  color: $grey-500;
 }
 
 .container {

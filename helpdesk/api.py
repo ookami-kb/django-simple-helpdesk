@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from tastypie import fields
 from tastypie.resources import ModelResource
 
-from helpdesk.models import Ticket, State, Project
+from helpdesk.models import Ticket, State, Project, Comment
 
 
 class StateResource(ModelResource):
@@ -15,7 +15,7 @@ class AssigneeResource(ModelResource):
 
     class Meta:
         queryset = User.objects.filter(groups__name='Helpdesk support')
-        fields = ['id']
+        fields = ['id', 'email']
 
 
 class ProjectResource(ModelResource):
@@ -28,6 +28,7 @@ class TicketResource(ModelResource):
     state = fields.ForeignKey(StateResource, 'state', full=True)
     project = fields.ForeignKey(ProjectResource, 'project', full=True)
     assignee = fields.ForeignKey(AssigneeResource, 'assignee', full=True)
+    customer_name = fields.CharField('customer_name', null=True)
 
     class Meta:
         queryset = Ticket.objects.all()
@@ -51,5 +52,25 @@ class TicketResource(ModelResource):
             orm_filters['project__machine_name'] = filters['filter_project']
         if 'filter_assignee' in filters:
             orm_filters['assignee__id'] = filters['filter__assignee']
+
+        return orm_filters
+
+
+class CommentResource(ModelResource):
+    author = fields.ForeignKey(AssigneeResource, 'author', full=True, null=True)
+    from_client = fields.BooleanField('is_from_client')
+
+    class Meta:
+        queryset = Comment.objects.all()
+        ordering = ['-created']
+
+    def build_filters(self, filters=None):
+        if filters is None:
+            filters = {}
+
+        orm_filters = super().build_filters(filters)
+
+        if 'filter_ticket' in filters:
+            orm_filters['ticket__pk'] = filters['filter_ticket']
 
         return orm_filters

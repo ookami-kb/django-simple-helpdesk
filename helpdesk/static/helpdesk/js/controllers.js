@@ -79,13 +79,21 @@ helpdeskControllers.controller('TicketListController', ['$scope', 'TicketList', 
     }]);
 
 
-helpdeskControllers.controller('TicketController', ['$scope', 'Ticket', function ($scope, Ticket) {
+helpdeskControllers.controller('TicketController', ['$scope', 'Ticket', 'Comment', function ($scope, Ticket, Comment) {
     $scope.ME = ME;
 
     function updateTicket() {
-        console.log($scope.ticketId);
         $scope.ticket = Ticket.query({ticketId: $scope.ticketId});
     }
 
+    function updateComments() {
+        var response = Comment.query({
+            filter_ticket: $scope.ticketId
+        }, function () {
+            $scope.comments = response.objects;
+        });
+    }
+
     updateTicket();
+    updateComments();
 }]);

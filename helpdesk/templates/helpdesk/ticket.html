@@ -3,12 +3,29 @@
 {% block content %}
     <div ng-init="ticketId={{ ticketId }}">
         <div class="mdl-grid container" ng-controller="TicketController">
-            <div class="mdl-cell mdl-cell--12-col mdl-card mdl-shadow--4dp card-issue">
-                <div class="card-issue__content">
+            <div class="mdl-cell mdl-cell--12-col mdl-card mdl-shadow--4dp">
+                <div class="card-issue__ticket">
                     {% verbatim %}
-                    <h2>{{ ticket.title }}</h2>
+                    <p class="ticket__title"><span class="ticket__id">HD-{{ ticket.id }}</span> {{ ticket.title }}</p>
+
+                    <p class="comment__title">{{ ticket.customer_name || 'Client' }} <span class="comment__email">{{ ticket.customer }}</span>
+                    </p>
+
+                    <p class="comment__info">{{ ticket.updated | date:'short' }}</p>
 
                     <div ng-bind-html="ticket.body"></div>
+                </div>
+                <div class="card-issue__comment {{ comment.from_client ? 'comment--client' : 'comment--user' }}"
+                     ng-repeat="comment in comments">
+                    <p class="comment__title">
+                        {{ comment.from_client ? ticket.customer_name || 'Client' : comment.author.full_name }}
+
+                        <span class="comment__email">{{ comment.from_client ? ticket.customer : comment.author.email }}</span>
+                    </p>
+
+                    <p class="comment__info">{{ ticket.updated | date:'short' }}</p>
+
+                    <div ng-bind-html="comment.body"></div>
                     {% endverbatim %}
                 </div>
             </div>
