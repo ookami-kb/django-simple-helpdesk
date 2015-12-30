@@ -37,8 +37,11 @@ class Command(BaseCommand):
 
     def _is_autoreply(self, message):
         for header in message.headers:
-            if header.get('Name') in ['Auto-Submitted', 'X-AutoReply'] and header.get('Value') != 'no':
-                return True
+            try:
+                if header['Name'].lower() in ['auto-submitted', 'x-autoreply'] and header['Value'].lower() != 'no':
+                    return True
+            except:
+                pass
         return False
 
     def handle_messages(self, imbox, project, email=None, assignee=None):
