@@ -108,7 +108,7 @@ LOGGING = {
     },
     'handlers': {
         'helpdesk': {
-            'filename': os.path.join(BASE_DIR, 'logs', 'helpdesk.log'),
+            'filename': os.path.join(BASE_DIR, 'helpdesk.log'),
             'class': 'logging.FileHandler',
             'level': 'INFO',
             'formatter': 'simple',
