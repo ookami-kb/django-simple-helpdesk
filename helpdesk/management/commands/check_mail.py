@@ -37,7 +37,7 @@ class Command(BaseCommand):
 
     def _is_autoreply(self, message):
         for header in message.headers:
-            if header.get('Name') == 'Auto-Submitted' and header.get('Value') != 'no':
+            if header.get('Name') in ['Auto-Submitted', 'X-AutoReply'] and header.get('Value') != 'no':
                 return True
         return False
 
