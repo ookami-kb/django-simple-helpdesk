@@ -9,6 +9,8 @@ HELPDESK_DEFAULTS = {
     'host': None,
     'mark_seen': True,
     'urlconf': None,
+    'ignore_autoreply': True,
+    'imap_host': 'imap.gmail.com',
 }
 
 SETTINGS = HELPDESK_DEFAULTS.copy()
