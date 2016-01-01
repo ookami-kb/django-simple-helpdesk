@@ -1,56 +1,77 @@
-{% load staticfiles %}
-<html>
-
+<html lang="en">{% load static %}
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Angular Material style sheet -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{% static 'helpdesk/css/ripples.min.css' %}" rel="stylesheet">
-    <link href="{% static 'helpdesk/css/material-wfont.min.css' %}" rel="stylesheet">
-    <link href="{% static 'helpdesk/css/jquery.dropdown.css' %}" rel="stylesheet">
-    <link href="{% static 'helpdesk/css/custom.css' %}?v3" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'helpdesk/css/md-data-table.min.css' %}">
+    <link rel="stylesheet" href="{% static 'helpdesk/css/styles.css' %}">
+
+    {% block css %}{% endblock %}
+
+    <style>
+        body, .main-content {
+            background: #F5F5F5;
+        }
+
+        .md-sidenav-left, .md-sidenav-left md-content {
+            background: #1A237E;
+            color: #fff;
+        }
+
+        .md-sidenav-left md-icon {
+            color: #fff;
+        }
+    </style>
+
 </head>
+<body ng-app="HelpdeskApp" ng-cloak>
+<section layout="row" flex>
+    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left"
+                md-is-locked-open="$mdMedia('gt-md')">
+        <md-content>
+            <md-list>
+                <md-list-item>
+                    <md-icon md-font-set="material-icons">home</md-icon>
+                    <p>HelpDesk</p>
+                </md-list-item>
+            </md-list>
+        </md-content>
 
-<body>
-<div class="navbar navbar-default">
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="{% url 'helpdesk_home' %}">HelpDesk</a>
-    </div>
+    </md-sidenav>
+    <section layout="column" layout-fill ng-controller="{% block controller %}{% endblock %}">
+        <md-toolbar class="md-whiteframe-4dp">
+            <div class="md-toolbar-tools">
+                <md-button class="md-icon-button" aria-label="Settings" ng-click="navToggle()" hide-gt-md>
+                    <md-icon md-font-set="material-icons">menu</md-icon>
+                </md-button>
+                <h2>
+                    <span>{% block title %}{% endblock %}</span>
+                </h2>
+            </div>
+        </md-toolbar>
+        <md-content layout="row" class="main-content" layout-wrap layout-align="space-around stretch">
+            {% block content %}{% endblock %}
+        </md-content>
+    </section>
+</section>
 
-    <div class="navbar-collapse collapse navbar-responsive-collapse">
-        <ul class="nav navbar-nav">
-            {% include 'helpdesk/menu.html' %}
-        </ul>
-    </div>
-</div>
+{% block pre_script %}{% endblock %}
 
-<div class="container-fluid">
-    {% block content %}{% endblock %}
-</div>
+<!-- Angular Material requires Angular.js Libraries -->
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-resource.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-sanitize.min.js"></script>
 
-<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<!-- Angular Material Library -->
+<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
 
-<script src="{% static 'helpdesk/js/ripples.min.js' %}"></script>
-<script src="{% static 'helpdesk/js/material.min.js' %}"></script>
-<script src="{% static 'helpdesk/js/jquery.dropdown.js' %}"></script>
-<script src="{% static 'helpdesk/js/custom.js' %}"></script>
-
-<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
-<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
-<script>
-    $(document).ready(function () {
-        $.material.init();
-    });
-</script>
+<script src="{% static 'helpdesk/js/app.js' %}"></script>
+<script src="{% static 'helpdesk/js/md-data-table.min.js' %}"></script>
+{% block scripts %}{% endblock %}
 
 </body>
-
 </html>

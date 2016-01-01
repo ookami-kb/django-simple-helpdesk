@@ -1,0 +1,43 @@
+.priority {
+  &--0 {
+    color: #9FA8DA;
+  }
+
+  &--1 {
+    color: #F57F17;
+  }
+
+  &--2 {
+    color: #F44336;
+  }
+}
+
+.row {
+  &--resolved {
+    opacity: .4;
+  }
+}
+
+.state {
+  font-weight: bold;
+
+  &--open {
+    color: #3F51B5;
+  }
+
+  &--resolved {
+    color: #1B5E20;
+  }
+}
+
+table.md-table:not(.md-row-select) td.md-cell:nth-child(n+2):nth-last-child(n+2), table.md-table:not(.md-row-select) th.md-column:nth-child(n+2):nth-last-child(n+2) {
+  padding: 0 24px 0 0;
+}
+
+.table-tickets tr {
+  cursor: pointer;
+
+  &:hover td {
+    background: #F5F5F5;
+  }
+}

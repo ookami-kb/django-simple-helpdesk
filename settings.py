@@ -34,9 +34,9 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sites',
 
+    'rest_framework',
+
     'helpdesk',
-    'bootstrap3',
-    'widget_tweaks',
     'ckeditor',
 )
 

@@ -1,5 +1,5 @@
-from django.conf.urls import url
-from django.contrib.auth.decorators import permission_required, login_required
+from django.conf.urls import url, include
+from django.contrib.auth.decorators import permission_required
 
 from helpdesk.views import HomeView, TicketView, EmailView, CommentEmailView, TicketCreateView, AttachmentView
 
@@ -13,5 +13,7 @@ urlpatterns = [
         name='helpdesk_email'),
     url(r'^comments/(?P<pk>\d+)/email/$', permission_required('helpdesk.view_tickets')(CommentEmailView.as_view()),
         name='helpdesk_comment_email'),
-    url(r'^attachments/(?P<signature>[A-z0-9:-]+)/', AttachmentView.as_view(), name='helpdesk_attachment')
+    url(r'^attachments/(?P<signature>[A-z0-9:-]+)/', AttachmentView.as_view(), name='helpdesk_attachment'),
+
+    url(r'^api/', include('helpdesk.api_urls')),
 ]

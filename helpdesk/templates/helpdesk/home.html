@@ -1,42 +1,61 @@
 {% extends 'helpdesk/base.html' %}
-{% load bootstrap3 %}
+
+{% block controller %}TicketListController{% endblock %}
+
+{% block title %}Tickets{% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-sm-4 col-sm-push-8">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Filters</h3>
-                </div>
-                <div class="panel-body">
-                    <form method="post">
-                        {% csrf_token %}
-                        {% bootstrap_form filter_form %}
-                        {% bootstrap_button 'Apply' button_type='submit' %}
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-8 col-sm-pull-4">
-            <div class="row">
-                <div class="col-xs-12">
-                    <form class="row search-form">
-                        <div class="col-lg-8 col-xs-6">
-                            {% bootstrap_field search_form.search layout='inline' %}
-                        </div>
-                        <div class="col-lg-2 col-xs-3">
-                            {% bootstrap_button 'Search' button_type='submit' button_class='btn-xs btn-block' %}
-                        </div>
-                        <div class="col-lg-2 col-xs-3">
-                            <a href="?" class="btn btn-xs btn-default">Reset</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            {% include list_template %}
-            <div class="text-center">
-                {% bootstrap_pagination page_obj extra=extra %}
-            </div>
-        </div>
+    {% verbatim %}
+    <div flex-gt-sm="100" flex>
+        <md-card>
+            <md-card-header>
+                <md-card-header-text>
+                    <span class="md-title">Tickets</span>
+                </md-card-header-text>
+            </md-card-header>
+            <md-card-content>
+                <md-table-container ng-cloak>
+                    <table md-table class="table-tickets">
+                        <thead md-head>
+                        <tr md-row>
+                            <th md-column><span show-gt-xs hide>State</span></th>
+                            <th md-column></th>
+                            <th md-column><span>Title</span></th>
+                            <th md-column><span>Project</span></th>
+                            <th md-column><span>User</span></th>
+                        </tr>
+                        </thead>
+                        <tbody md-body>
+                        <tr md-row ng-repeat="ticket in tickets" ng-class="ticketRowClass(ticket)"
+                            ng-click="openTicket(ticket.id)">
+                            <td md-cell>
+                                <div ng-class="stateLabelClass(ticket)">
+                                    <span show-gt-xs hide>{{ ticket.state.title }}</span>
+                                    <span hide-gt-xs>{{ ticket.state.title[0] }}</span>
+
+                                </div>
+                            </td>
+                            <td md-cell>
+                                <md-icon ng-class="'priority priority--{{ ticket.priority }}'"
+                                         md-font-set="material-icons">{{ getIcon(ticket.priority) }}
+                                </md-icon>
+                            </td>
+                            <td md-cell>
+
+                                <span>HD-{{ ticket.id }} {{ ticket.title }}</span>
+
+                                <div show-gt-xs hide>
+                                    <small>{{ ticket.created|date }} – {{ ticket.updated|date }}</small>
+                                </div>
+                            </td>
+                            <td md-cell>{{ ticket.project_title }}</td>
+                            <td md-cell>{{ ticket.customer_name }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </md-table-container>
+            </md-card-content>
+        </md-card>
     </div>
+    {% endverbatim %}
 {% endblock %}

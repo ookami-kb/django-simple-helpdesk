@@ -106,11 +106,19 @@ class Ticket(models.Model):
     attachments = generic.GenericRelation(MailAttachment)
 
     @property
+    def project_title(self):
+        return self.project.title
+
+    @property
     def customer_user(self):
         try:
             return User.objects.get(email=self.customer)
         except (User.DoesNotExist, User.MultipleObjectsReturned):
             return None
+
+    @property
+    def customer_name(self):
+        return self.customer_user.get_full_name() if self.customer_user else None
 
     def reply(self, text, author=None, state='resolved'):
         answer = Comment.objects.create(
