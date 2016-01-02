@@ -1,9 +1,18 @@
 from django.conf.urls import url
 from django.contrib.auth.decorators import permission_required
 
-from helpdesk.api_views import TicketListView
+from helpdesk.api_views import TicketListView, StateListView, AssigneeListView, TicketView
 
 urlpatterns = [
-    url(r'^tickets/$', permission_required('helpdesk.view_tickets')(TicketListView.as_view()),
-        name='helpdesk__api__ticket_list')
+    url(r'^tickets\.json$', permission_required('helpdesk.view_tickets')(TicketListView.as_view()),
+        name='helpdesk__api__ticket_list'),
+
+    url(r'^tickets/(?P<pk>\d+)\.json$', permission_required('helpdesk.view_tickets')(TicketView.as_view()),
+        name='helpdesk__api__ticket'),
+
+    url(r'^states/$', permission_required('helpdesk.view_tickets')(StateListView.as_view()),
+        name='helpdesk__api__state_list'),
+
+    url(r'^assignees/$', permission_required('helpdesk.view_tickets')(AssigneeListView.as_view()),
+        name='helpdesk__api__assignee_list'),
 ]

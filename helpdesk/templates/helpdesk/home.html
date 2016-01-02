@@ -10,28 +10,65 @@
         <md-card>
             <md-card-header>
                 <md-card-header-text>
+                    <span class="md-title">Filters</span>
+                </md-card-header-text>
+            </md-card-header>
+            <md-card-content>
+                <div layout-gt-xs="row">
+                    <md-input-container>
+                        <label>State</label>
+                        <md-select ng-model="currentState" ng-change="updateTicketList()">
+                            <md-option value="">ALL</md-option>
+                            <md-option ng-repeat="state in states" value="{{state.machine_name}}">
+                                {{state.title}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-input-container>
+                        <label>Assignee</label>
+                        <md-select ng-model="currentAssignee" ng-change="updateTicketList()">
+                            <md-option value="">ALL</md-option>
+                            <md-option value="me">ME</md-option>
+                            <md-option ng-repeat="assignee in assignees" value="{{assignee.id}}">
+                                {{ assignee.first_name }} {{ assignee.last_name }} ({{ assignee.tickets_count }})
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-input-container class="md-block" flex-gt-xs>
+                        <label>Search</label>
+
+                        <input ng-model="currentSearch"
+                               ng-model-options="{debounce: 1000}"
+                               ng-change="updateTicketList()">
+                    </md-input-container>
+                </div>
+            </md-card-content>
+            <md-card-header>
+                <md-card-header-text>
                     <span class="md-title">Tickets</span>
                 </md-card-header-text>
             </md-card-header>
             <md-card-content>
                 <md-table-container ng-cloak>
-                    <table md-table class="table-tickets">
+                    <table md-table class="table-tickets" md-progress="tickets.$promise">
                         <thead md-head>
                         <tr md-row>
                             <th md-column><span show-gt-xs hide>State</span></th>
                             <th md-column></th>
                             <th md-column><span>Title</span></th>
-                            <th md-column><span>Project</span></th>
-                            <th md-column><span>User</span></th>
+                            <th md-column show-gt-xs hide><span>Project</span></th>
+                            <th md-column show-gt-xs hide><span>User</span></th>
+                            <th md-column><span>Assignee</span></th>
                         </tr>
                         </thead>
                         <tbody md-body>
-                        <tr md-row ng-repeat="ticket in tickets" ng-class="ticketRowClass(ticket)"
+                        <tr md-row ng-repeat="ticket in tickets.results" ng-class="ticketRowClass(ticket)"
                             ng-click="openTicket(ticket.id)">
                             <td md-cell>
                                 <div ng-class="stateLabelClass(ticket)">
-                                    <span show-gt-xs hide>{{ ticket.state.title }}</span>
-                                    <span hide-gt-xs>{{ ticket.state.title[0] }}</span>
+                                    <span show-gt-xs hide>{{ ticket.state.title }}</span> <span hide-gt-xs>{{ ticket.state.title[0] }}</span>
 
                                 </div>
                             </td>
@@ -47,13 +84,26 @@
                                 <div show-gt-xs hide>
                                     <small>{{ ticket.created|date }} – {{ ticket.updated|date }}</small>
                                 </div>
+
+                                <div hide-gt-xs>
+                                    <small><strong>{{ ticket.project_title }}</strong></small>
+                                </div>
+
+                                <div hide-gt-xs>
+                                    <small>{{ ticket.customer_name }}</small>
+                                </div>
                             </td>
-                            <td md-cell>{{ ticket.project_title }}</td>
-                            <td md-cell>{{ ticket.customer_name }}</td>
+                            <td md-cell show-gt-xs hide>{{ ticket.project_title }}</td>
+                            <td md-cell show-gt-xs hide>{{ ticket.customer_name }}</td>
+                            <td md-cell>{{ ticket.assignee.first_name }} {{ ticket.assignee.last_name }}</td>
                         </tr>
                         </tbody>
                     </table>
                 </md-table-container>
+
+                <md-table-pagination md-limit="15" md-page="1" md-total="{{tickets.count}}"
+                                     md-options="[15,30,45]"
+                                     md-on-paginate="updateTicketList" md-page-select></md-table-pagination>
             </md-card-content>
         </md-card>
     </div>

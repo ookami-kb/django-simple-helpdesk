@@ -1,4 +1,3 @@
-import base64
 import os
 
 from django.conf import settings
@@ -14,7 +13,6 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.template.loader import render_to_string
-
 from django.utils.safestring import mark_safe
 
 from helpdesk import SETTINGS
@@ -30,6 +28,26 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class AssigneeManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(groups__name='Helpdesk support')
+
+
+class Assignee(User):
+    class Meta:
+        proxy = True
+
+    objects = AssigneeManager()
+
+    @property
+    def tickets_count(self):
+        return self.ticket_set.filter(state__resolved=False).count()
+
+    @property
+    def full_name(self):
+        return self.get_full_name()
 
 
 class ProjectAlias(models.Model):
@@ -118,13 +136,13 @@ class Ticket(models.Model):
 
     @property
     def customer_name(self):
-        return self.customer_user.get_full_name() if self.customer_user else None
+        return self.customer_user.get_full_name() if self.customer_user else "Unregistered"
 
     def reply(self, text, author=None, state='resolved'):
         answer = Comment.objects.create(
-            ticket=self,
-            body=text,
-            author=author or self.project.default_assignee
+                ticket=self,
+                body=text,
+                author=author or self.project.default_assignee
         )
         self.state = State.objects.get(machine_name=state)
         self.save()
@@ -200,7 +218,7 @@ class Ticket(models.Model):
 
 
 class Comment(models.Model):
-    ticket = models.ForeignKey(Ticket)
+    ticket = models.ForeignKey(Ticket, related_name='comments')
     created = models.DateTimeField(auto_now_add=True)
     body = models.TextField()
     author = models.ForeignKey(User, blank=True, null=True, related_name='helpdesk_answers')
