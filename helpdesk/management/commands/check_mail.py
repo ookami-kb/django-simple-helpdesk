@@ -32,7 +32,7 @@ class Command(BaseCommand):
             return None
 
         try:
-            return Ticket.objects.get(customer=customer, pk=pk)
+            return Ticket.objects.get(customer__iexact=customer, pk=pk)
         except Ticket.DoesNotExist:
             return None
 
@@ -79,7 +79,7 @@ class Command(BaseCommand):
                     ticket = Ticket.create(
                             title=subject[:255],
                             body=body,
-                            customer=message.sent_from[0]['email'],
+                            customer=message.sent_from[0]['email'].lower(),
                             message_id=uid,
                             assignee=assignee or project.default_assignee,
                             project=project
