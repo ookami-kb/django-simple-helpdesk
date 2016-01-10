@@ -136,7 +136,7 @@ class Ticket(models.Model):
 
     @property
     def customer_name(self):
-        return self.customer_user.get_full_name() if self.customer_user else "Unregistered"
+        return self.customer_user.get_full_name() if self.customer_user else "Unregistered user"
 
     def reply(self, text, author=None, state='resolved'):
         answer = Comment.objects.create(

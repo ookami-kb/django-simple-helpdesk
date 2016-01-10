@@ -15,21 +15,46 @@
             </md-card-header>
             <div class="ticket-info">
                 <div class="customer-label">{{ ticket.customer_name }}</div>
-                <div class="ticket-created">{{ ticket.created|date }}</div>
+                <div class="ticket-created">{{ ticket.created|date:"dd.MM.yyyy HH:mm" }}</div>
             </div>
             <md-card-content>
                 <div ng-bind-html="ticket.body"></div>
             </md-card-content>
 
             <div ng-repeat="comment in ticket.comments">
-                <div class="ticket-info ticket-info--right">
-                    <div class="customer-label">{{ comment.author.first_name }} {{ comment.author.last_name }}</div>
-                    <div class="ticket-created">{{ comment.created|date }}</div>
+                <a id="comment-{{ comment.id }}"></a>
+                <div class="ticket-info" ng-class="{'ticket-info--client': !comment.author}">
+                    <div class="customer-label" ng-show="comment.author">
+                        {{ comment.author.first_name }} {{ comment.author.last_name }}
+                    </div>
+                    <div class="customer-label" ng-hide="comment.author">
+                        {{ ticket.customer_name }}
+                    </div>
+                    <div class="ticket-created">{{ comment.created|date:"dd.MM.yyyy HH:mm" }}</div>
                 </div>
                 <md-card-content>
                     <div ng-bind-html="comment.body"></div>
                 </md-card-content>
             </div>
+
+            <div class="ticket-info">
+                <div class="customer-label">Add message:</div>
+            </div>
+
+            <md-card-content>
+                <form method="post" name="commentForm" ng-submit="sendComment()" novalidate>
+                    <md-input-container class="md-block">
+                        <label>Enter your message here…</label>
+
+                        <textarea ng-model="answer.body" columns="1" required></textarea>
+                    </md-input-container>
+
+                    <section layout="row" layout-align="end center" layout-wrap>
+                        <md-button type="submit" ng-disabled="commentForm.$invalid || sending"
+                                   class="md-raised md-primary">Send</md-button>
+                    </section>
+                </form>
+            </md-card-content>
         </md-card>
     </div>
     <div flex-gt-sm="30" flex>
@@ -42,6 +67,7 @@
 
             <md-card-content>
                 <p>State: {{ ticket.state.title }}</p>
+                <p ng-show="ticket.customer">Customer: {{ ticket.customer }}</p>
             </md-card-content>
         </md-card>
     </div>

@@ -12,6 +12,19 @@
 .ticket-info {
   background: #C5CAE9;
   padding: 8px;
+
+  &--client {
+    text-align: right;
+    background: #B2DFDB;
+
+    .customer-label {
+      color: #004D40;
+    }
+
+    .ticket-created {
+      color: #009688;
+    }
+  }
 }
 
 .comment-info {

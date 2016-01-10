@@ -26,11 +26,12 @@ class TicketListSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = AssigneeSerializer()
+    author = AssigneeSerializer(read_only=True)
 
     class Meta:
         model = Comment
-        fields = ('created', 'body', 'author', 'internal', 'notified')
+        fields = ('id', 'created', 'body', 'author', 'internal', 'notified')
+        read_only_fields = ('created', 'author', 'notified')
 
 
 class TicketDetailSerializer(TicketListSerializer):

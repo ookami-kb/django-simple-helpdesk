@@ -4,6 +4,12 @@ angular.module('HelpdeskApp', ['ngMaterial', 'ngResource', 'md.data.table', 'ngS
             query: {
                 method: 'GET',
                 isArray: false
+            },
+            addComment: {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
             }
         })
     }])
@@ -14,7 +20,34 @@ angular.module('HelpdeskApp', ['ngMaterial', 'ngResource', 'md.data.table', 'ngS
         return $resource('/helpdesk/api/assignees/', {}, {})
     }])
     .controller('TicketController', ['$scope', 'TicketList', function ($scope, TicketList) {
-        $scope.ticket = TicketList.query({id: ticketId})
+        $scope.ticket = TicketList.query({id: ticketId});
+
+        $scope.sending = false;
+        resetAnswer();
+
+        $scope.sendComment = function () {
+            $scope.sending = true;
+
+            TicketList.addComment({id: ticketId}, $scope.answer).$promise.then(function (response) {
+                TicketList.query({id: ticketId}).$promise.then(function (tickets) {
+                    $scope.ticket = tickets;
+                });
+                resetAnswer();
+                $scope.commentForm.$setPristine();
+                $scope.commentForm.$setUntouched();
+            }).catch(function () {
+                console.log('ERROR');
+            }).finally(function () {
+                $scope.sending = false;
+            });
+        };
+
+        function resetAnswer() {
+            $scope.answer = {
+                body: '',
+                internal: false
+            };
+        }
     }])
     .controller('TicketListController', ['$scope', 'TicketList', 'StateList', 'AssigneeList',
         function ($scope, TicketList, StateList, AssigneeList) {
