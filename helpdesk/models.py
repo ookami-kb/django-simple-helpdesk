@@ -3,9 +3,9 @@ import os
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.sites.models import get_current_site
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.files.storage import FileSystemStorage
 from django.core.mail import EmailMessage
 from django.core.signing import Signer
@@ -74,7 +74,7 @@ attachment_fs = FileSystemStorage(location=settings.BASE_DIR + '/attachments',
 class MailAttachment(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey()
+    content_object = GenericForeignKey()
     attachment = models.FileField(upload_to='tickets', storage=attachment_fs)
 
     @property
@@ -103,7 +103,7 @@ class Ticket(models.Model):
     message_id = models.CharField(max_length=255, unique=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    attachments = generic.GenericRelation(MailAttachment)
+    attachments = GenericRelation(MailAttachment)
 
     @property
     def customer_user(self):
@@ -199,7 +199,7 @@ class Comment(models.Model):
     internal = models.BooleanField(default=False, help_text='If checked this comment will not be emailed to client')
     notified = models.BooleanField(default=True, editable=False)
     message_id = models.CharField(max_length=256, blank=True, null=True)
-    attachments = generic.GenericRelation(MailAttachment)
+    attachments = GenericRelation(MailAttachment)
 
     def is_from_client(self):
         return self.author is None

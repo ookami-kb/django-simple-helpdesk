@@ -2,7 +2,7 @@
 from mimetypes import guess_type
 import time
 
-from django.contrib.contenttypes.generic import generic_inlineformset_factory
+from django.contrib.contenttypes.forms import generic_inlineformset_factory
 from django.core.signing import Signer, BadSignature
 from django.core.urlresolvers import reverse
 from django.db.models import Q
