@@ -137,3 +137,5 @@ CKEDITOR_CONFIGS = {
 }
 
 SITE_ID = 1
+
+HELPDESK_DEFAULT_PROFILE = 'utils.HelpdeskDefaultProfile'

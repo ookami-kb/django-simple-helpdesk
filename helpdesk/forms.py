@@ -1,16 +1,28 @@
 from ckeditor.fields import RichTextFormField
 from django import forms
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models import Count
 from django.forms import ModelChoiceField
+from django.utils.module_loading import import_string
 
-from helpdesk.models import State, Comment, Ticket, Project, HelpdeskProfile
+from helpdesk.models import State, Comment, Ticket, Project
+from helpdesk.utils import DefaultProfile
+
+
+def get_default_profile():
+    try:
+        return import_string(settings.HELPDESK_DEFAULT_PROFILE)()
+    except AttributeError:
+        return DefaultProfile()
 
 
 class ProfileChoiceField(ModelChoiceField):
     def label_from_instance(self, obj):
         label = obj.helpdeskprofile.label if hasattr(obj, 'helpdeskprofile') else None
-        return '%s (%s)' % (obj.get_full_name(), label) if label else obj.first_name
+        if not label:
+            label = get_default_profile().label
+        return '%s (%s)' % (obj.get_full_name(), label) if label else obj.get_full_name()
 
     def __init__(self, *args, **kwargs):
         queryset = User.objects.filter(groups__name='Helpdesk support').order_by('first_name')

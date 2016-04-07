@@ -32,7 +32,8 @@ class CommentAdmin(admin.ModelAdmin):
 
 @admin.register(HelpdeskProfile)
 class HelpdeskProfileAdmin(admin.ModelAdmin):
-    list_display = ('user',)
+    list_display = ('user', 'label')
+    raw_id_fields = ['user']
 
 
 @admin.register(ProjectAlias)
