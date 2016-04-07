@@ -1,6 +1,5 @@
-# -*- encoding: utf-8 -*-
 from django.contrib import admin
-from django.contrib.contenttypes.generic import GenericTabularInline
+from django.contrib.contenttypes.admin import GenericTabularInline
 
 from helpdesk.models import Ticket, Project, State, Comment, HelpdeskProfile, MailAttachment, ProjectAlias
 
