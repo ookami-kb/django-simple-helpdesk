@@ -10,18 +10,18 @@ from helpdesk.models import State, Comment, Ticket, Project
 from helpdesk.utils import DefaultProfile
 
 
-def get_default_profile():
+def get_default_profile(user):
     try:
-        return import_string(settings.HELPDESK_DEFAULT_PROFILE)()
+        return import_string(settings.HELPDESK_DEFAULT_PROFILE)(user)
     except AttributeError:
-        return DefaultProfile()
+        return DefaultProfile(user)
 
 
 class ProfileChoiceField(ModelChoiceField):
     def label_from_instance(self, obj):
         label = obj.helpdeskprofile.label if hasattr(obj, 'helpdeskprofile') else None
         if not label:
-            label = get_default_profile().label
+            label = get_default_profile(obj).label
         return '%s (%s)' % (obj.get_full_name(), label) if label else obj.get_full_name()
 
     def __init__(self, *args, **kwargs):
