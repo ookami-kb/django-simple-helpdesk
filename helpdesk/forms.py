@@ -25,7 +25,7 @@ class ProfileChoiceField(ModelChoiceField):
         return '%s (%s)' % (obj.get_full_name(), label) if label else obj.get_full_name()
 
     def __init__(self, *args, **kwargs):
-        queryset = User.objects.filter(groups__name='Helpdesk support').order_by('first_name')
+        queryset = User.objects.filter(is_active=True, groups__name='Helpdesk support').order_by('first_name')
         super(ProfileChoiceField, self).__init__(queryset, *args, **kwargs)
 
 
