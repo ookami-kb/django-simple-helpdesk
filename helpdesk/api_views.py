@@ -1,10 +1,10 @@
 from django.db.models import Q
 from rest_framework import status
-from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView, CreateAPIView
+from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
-from helpdesk.models import Ticket, State, Assignee, Comment
+from helpdesk.models import Ticket, State, Assignee
 from helpdesk.serializers import TicketListSerializer, StateSerializer, AssigneeSerializer, TicketDetailSerializer, \
     CommentSerializer
 
