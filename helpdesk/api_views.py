@@ -1,12 +1,9 @@
 from django.db.models import Q
-from rest_framework import status
 from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.response import Response
 
 from helpdesk.models import Ticket, State, Assignee
-from helpdesk.serializers import TicketListSerializer, StateSerializer, AssigneeSerializer, TicketDetailSerializer, \
-    CommentSerializer
+from helpdesk.serializers import TicketListSerializer, StateSerializer, AssigneeSerializer, TicketDetailSerializer
 
 
 class Pagination(PageNumberPagination):
@@ -52,13 +49,13 @@ class TicketView(RetrieveUpdateAPIView):
 
         return Ticket.objects.filter(**filters)
 
-    def post(self, request, *args, **kwargs):
-        ticket = self.get_object()
-        data = request.data
-        serializer = CommentSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(author=request.user, ticket=ticket)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # def post(self, request, *args, **kwargs):
+        #     ticket = self.get_object()
+        #     data = request.data
+        #     serializer = CommentSerializer(data=data)
+        #     serializer.is_valid(raise_exception=True)
+        #     serializer.save(author=request.user, ticket=ticket)
+        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class StateListView(ListAPIView):
