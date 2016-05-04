@@ -18,7 +18,7 @@ from django.utils.safestring import mark_safe
 from helpdesk import SETTINGS
 from helpdesk.signals import new_comment_from_client, ticket_updated, new_answer, ticket_pre_created, \
     ticket_post_created
-
+import uuid
 
 class Project(models.Model):
     machine_name = models.CharField(max_length=64, primary_key=True)
@@ -224,7 +224,7 @@ class Comment(models.Model):
     author = models.ForeignKey(User, blank=True, null=True, related_name='helpdesk_answers')
     internal = models.BooleanField(default=False, help_text='If checked this comment will not be emailed to client')
     notified = models.BooleanField(default=True, editable=False)
-    message_id = models.CharField(max_length=256, blank=True, null=True)
+    message_id = models.UUIDField(default=uuid.uuid1, editable=False)
     attachments = GenericRelation(MailAttachment)
 
     def is_from_client(self):

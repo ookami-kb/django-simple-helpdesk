@@ -1,9 +1,11 @@
 from django.db.models import Q
-from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView, ListCreateAPIView
 from rest_framework.pagination import PageNumberPagination
 
-from helpdesk.models import Ticket, State, Assignee
-from helpdesk.serializers import TicketListSerializer, StateSerializer, AssigneeSerializer, TicketDetailSerializer
+from helpdesk.models import Ticket, State, Assignee, Comment
+from helpdesk.serializers import TicketListSerializer, StateSerializer,\
+    AssigneeSerializer, TicketDetailSerializer, CommentSerializer
+from django.shortcuts import get_object_or_404
 
 
 class Pagination(PageNumberPagination):
@@ -66,3 +68,12 @@ class StateListView(ListAPIView):
 class AssigneeListView(ListAPIView):
     serializer_class = AssigneeSerializer
     queryset = Assignee.objects.all()
+
+
+class CommentListView(ListCreateAPIView):
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        ticket_pk = self.kwargs['pk']
+        ticket_obj = get_object_or_404(Ticket, pk=ticket_pk)
+        return Comment.objects.filter(ticket=ticket_obj)
