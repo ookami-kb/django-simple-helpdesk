@@ -2,10 +2,15 @@ from django.db.models import Q
 from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView, ListCreateAPIView
 from rest_framework.pagination import PageNumberPagination
 
-from helpdesk.models import Ticket, State, Assignee, Comment
+from helpdesk.models import Ticket, State, Assignee, Comment, MailAttachment, AttachmentFile
 from helpdesk.serializers import TicketListSerializer, StateSerializer,\
     AssigneeSerializer, TicketDetailSerializer, CommentSerializer
 from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
+from rest_framework import status
+from ast import literal_eval
+from django.contrib.contenttypes.models import ContentType
+
 
 
 class Pagination(PageNumberPagination):
@@ -77,3 +82,40 @@ class CommentListView(ListCreateAPIView):
         ticket_pk = self.kwargs['pk']
         ticket_obj = get_object_or_404(Ticket, pk=ticket_pk)
         return Comment.objects.filter(ticket=ticket_obj)
+
+
+    def post(self, request, *args, **kwargs):
+
+        # Get ticket object
+        ticket_pk = self.kwargs['pk']
+        ticket_obj = get_object_or_404(Ticket, pk=ticket_pk)
+
+        # Create comment
+        comment = Comment.objects.create(
+            ticket = ticket_obj,
+            body = request.data.get('body'),
+            author = request.user,
+            internal = request.data.get('internal'),
+        )
+
+        # Handle attachments
+        attachments_ids = request.query_params.get('attachments_ids', None)        
+        if attachments_ids:
+            comment_content_type = ContentType.objects.get(app_label='helpdesk', model='comment')
+            ids = literal_eval(attachments_ids)
+            print(ids, type(ids))
+            for attachment_id in ids:
+                try:
+                    attachment_file = AttachmentFile.objects.get(pk=attachment_id)
+                    attachment_obj = MailAttachment.objects.create(
+                        content_type = comment_content_type,
+                        object_id = comment.id,
+                        attachment = attachment_file
+                    )
+                    attachment_obj.save()
+                
+                except AttachmentFile.DoesNotExist:
+                    pass
+
+        serializer = self.get_serializer(comment)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

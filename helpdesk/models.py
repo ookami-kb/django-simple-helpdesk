@@ -89,20 +89,30 @@ attachment_fs = FileSystemStorage(location=settings.BASE_DIR + '/attachments',
                                   base_url='/helpdesk/attachments/')
 
 
-class MailAttachment(models.Model):
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey()
-    attachment = models.FileField(upload_to='tickets', storage=attachment_fs)
+class AttachmentFile(models.Model):
 
+    attachment_file = models.FileField(upload_to='tickets', storage=attachment_fs)
+    
     @property
     def filename(self):
-        return os.path.basename(self.attachment.name)
+        return os.path.basename(self.attachment_file.name)
 
     @property
     def signed_url(self):
         signer = Signer()
         return reverse('helpdesk_attachment', args=[signer.sign(self.pk)])
+
+    def __str__(self):
+        return self.filename
+
+class MailAttachment(models.Model):
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey()
+    attachment = models.OneToOneField(AttachmentFile, blank=True, null=True)
+
+    def __str__(self):
+        return self.attachment if self.attachment else 'No attachment'
 
 
 class Ticket(models.Model):

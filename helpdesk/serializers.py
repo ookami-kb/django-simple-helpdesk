@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from helpdesk.models import Ticket, State, Assignee, Comment, MailAttachment
+from helpdesk.models import Ticket, State, Assignee, Comment, MailAttachment, AttachmentFile
 
 
 class StateSerializer(serializers.ModelSerializer):
@@ -27,13 +27,6 @@ class TicketListSerializer(serializers.ModelSerializer):
                   'customer_name', 'assignee', 'assignee_id')
 
 
-class AttachmentSerializer(serializers.ModelSerializer):
-    """Mail attachments serializer class"""
-    class Meta:
-        model = MailAttachment
-        fields = ('attachment', 'filename', 'signed_url')
-
-
 '''
 class AttachmentRelatedField(serializers.RelatedField):
     """Attachment related field"""
@@ -44,19 +37,28 @@ class AttachmentRelatedField(serializers.RelatedField):
         return serializer.data
 '''
 
+class AttachmentFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AttachmentFile
+        fields = ('filename', 'signed_url')
+
+
+class AttachmentSerializer(serializers.ModelSerializer):
+    """Mail attachments serializer class"""
+    attachment = AttachmentFileSerializer()
+    class Meta:
+        model = MailAttachment
+        fields = ('id', 'attachment')
+
+
 class CommentSerializer(serializers.ModelSerializer):
     """Comment serializer"""
     author = AssigneeSerializer(read_only=True)
-    attachments = AttachmentSerializer(many=True)
-    #attachments = AttachmentRelatedField(many=True)
+    attachments = AttachmentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Comment
-        #fields = (
-        #    'id', 'message_id', 'created', 'body', 'author', 
-        #    'internal', 'notified', 'attachments',
-        #)
-        read_only_fields = ('created', 'author', 'notified', 'ticket')
+        read_only_fields = ('created', 'author', 'notified', 'ticket', 'attachments')
 
 
 class TicketDetailSerializer(TicketListSerializer):
