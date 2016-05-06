@@ -112,7 +112,7 @@ class MailAttachment(models.Model):
     attachment = models.OneToOneField(AttachmentFile, blank=True, null=True)
 
     def __str__(self):
-        return self.attachment if self.attachment else 'No attachment'
+        return self.attachment.filename if self.attachment else 'No attachment'
 
 
 class Ticket(models.Model):

@@ -1,7 +1,8 @@
 from django.conf.urls import url
 from django.contrib.auth.decorators import permission_required
 
-from helpdesk.api_views import TicketListView, StateListView, AssigneeListView, TicketView, CommentListView
+from helpdesk.api_views import TicketListView, StateListView, AssigneeListView,\
+    TicketView, CommentListView, AttachmentFileUploadView
 
 urlpatterns = [
     url(r'^tickets\.json$', permission_required('helpdesk.view_tickets')(TicketListView.as_view()),
@@ -18,4 +19,10 @@ urlpatterns = [
 
     url(r'^assignees\.json$', permission_required('helpdesk.view_tickets')(AssigneeListView.as_view()),
         name='helpdesk__api__assignee_list'),
+
+    url(r'^attachments/upload-file$', 
+        AttachmentFileUploadView.as_view(), 
+        name='helpdesk__api__attachment_file_upload'
+    ),
+
 ]

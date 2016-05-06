@@ -1,16 +1,16 @@
 from django.db.models import Q
-from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView, ListCreateAPIView
+from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView, ListCreateAPIView, CreateAPIView
 from rest_framework.pagination import PageNumberPagination
 
 from helpdesk.models import Ticket, State, Assignee, Comment, MailAttachment, AttachmentFile
 from helpdesk.serializers import TicketListSerializer, StateSerializer,\
-    AssigneeSerializer, TicketDetailSerializer, CommentSerializer
+    AssigneeSerializer, TicketDetailSerializer, CommentSerializer, AttachmentFileSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
 from ast import literal_eval
 from django.contrib.contenttypes.models import ContentType
-
+from rest_framework.parsers import FormParser, MultiPartParser
 
 
 class Pagination(PageNumberPagination):
@@ -78,17 +78,17 @@ class AssigneeListView(ListAPIView):
 class CommentListView(ListCreateAPIView):
     serializer_class = CommentSerializer
 
+    def _get_ticket_object(self):
+        return get_object_or_404(Ticket, pk=self.kwargs['pk'])        
+
     def get_queryset(self):
-        ticket_pk = self.kwargs['pk']
-        ticket_obj = get_object_or_404(Ticket, pk=ticket_pk)
-        return Comment.objects.filter(ticket=ticket_obj)
+        return Comment.objects.filter(ticket=self._get_ticket_object())
 
 
     def post(self, request, *args, **kwargs):
 
         # Get ticket object
-        ticket_pk = self.kwargs['pk']
-        ticket_obj = get_object_or_404(Ticket, pk=ticket_pk)
+        ticket_obj = self._get_ticket_object()
 
         # Create comment
         comment = Comment.objects.create(
@@ -101,21 +101,33 @@ class CommentListView(ListCreateAPIView):
         # Handle attachments
         attachments_ids = request.query_params.get('attachments_ids', None)        
         if attachments_ids:
-            comment_content_type = ContentType.objects.get(app_label='helpdesk', model='comment')
+            comment_ct = ContentType.objects.get(
+                app_label='helpdesk', 
+                model='comment'
+            )
             ids = literal_eval(attachments_ids)
-            print(ids, type(ids))
+
             for attachment_id in ids:
                 try:
                     attachment_file = AttachmentFile.objects.get(pk=attachment_id)
                     attachment_obj = MailAttachment.objects.create(
-                        content_type = comment_content_type,
+                        content_type = comment_ct,
                         object_id = comment.id,
                         attachment = attachment_file
                     )
                     attachment_obj.save()
                 
-                except AttachmentFile.DoesNotExist:
+                except:
                     pass
 
         serializer = self.get_serializer(comment)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class AttachmentFileUploadView(CreateAPIView):
+    """Attachment file upload"""
+    serializer_class = AttachmentFileSerializer
+    parser_classes = (FormParser, MultiPartParser)
+
+    def perform_create(self, serializer):
+        serializer.save(attachment_file=self.request.data.get('attachment_file'))

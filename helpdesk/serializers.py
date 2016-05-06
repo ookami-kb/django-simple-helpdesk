@@ -27,20 +27,10 @@ class TicketListSerializer(serializers.ModelSerializer):
                   'customer_name', 'assignee', 'assignee_id')
 
 
-'''
-class AttachmentRelatedField(serializers.RelatedField):
-    """Attachment related field"""
-    queryset=MailAttachment.objects.all()
-
-    def to_representation(self, value):
-        serializer = AttachmentSerializer(value)
-        return serializer.data
-'''
-
 class AttachmentFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = AttachmentFile
-        fields = ('filename', 'signed_url')
+        fields = ('id', 'filename', 'signed_url')
 
 
 class AttachmentSerializer(serializers.ModelSerializer):
