@@ -52,7 +52,7 @@ class APITests(APITestCase):
         uploaded_file_3 = response.data['filename']
 
         # Post first comment with attachment
-        url = 'http://127.0.0.1:8000/helpdesk/api/tickets/1/comments.json' 
+        url = '/helpdesk/api/tickets/1/comments.json' 
         data = {
             'internal': 'true',
             'body': 'test comment',
@@ -81,9 +81,8 @@ class APITests(APITestCase):
         self.assertEqual(len(response.data['attachments']), 2)
 
         # Get comment's attachments filenames
-        if response.data['attachments']:
-            comment_attachment_filename = response.data['attachments'][0]['attachment']['filename']
-            self.assertEqual(uploaded_file_2, comment_attachment_filename)
+        comment_attachment_filename = response.data['attachments'][0]['attachment']['filename']
+        self.assertEqual(uploaded_file_2, comment_attachment_filename)
 
-            comment_attachment_filename = response.data['attachments'][1]['attachment']['filename']
-            self.assertEqual(uploaded_file_3, comment_attachment_filename)
+        comment_attachment_filename = response.data['attachments'][1]['attachment']['filename']
+        self.assertEqual(uploaded_file_3, comment_attachment_filename)
