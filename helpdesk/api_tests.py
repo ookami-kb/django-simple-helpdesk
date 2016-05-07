@@ -9,15 +9,8 @@ import tempfile
 class APITests(APITestCase):
 
     def setUp(self):
-        u = User.objects.create_superuser('test', password='test',
-                                     email='test@test.test')
-        u.save()
-
-        state = State.objects.create(
-            machine_name = 'test',
-            title = 'Test'
-        )
-
+        u = User.objects.create_superuser('test', password='test', email='test@test.test')
+        state = State.objects.create(machine_name = 'test', title = 'Test')
         ticket = Ticket.objects.create(
             pk = 1,
             title = 'test',
@@ -34,30 +27,63 @@ class APITests(APITestCase):
         client = APIClient()
         client.login(username='test', password='test')
 
-
         # Upload new attachment file
+        
         url = reverse('helpdesk__api__attachment_file_upload')
-        temp_file = tempfile.NamedTemporaryFile()
-        data = {'attachment_file': temp_file,}
-        response = client.post(url, data, format='multipart')
+        # Create test files
+        temp_file_1 = tempfile.NamedTemporaryFile()
+        temp_file_2 = tempfile.NamedTemporaryFile()
+        temp_file_3 = tempfile.NamedTemporaryFile()
+
+        # Upload test files
+        response = client.post(url, {'attachment_file': temp_file_1,}, format='multipart')
         # Check if created
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # Remember uploaded files names
+        uploaded_file_1 = response.data['filename']
         
-        # Remember uploaded file's name
-        uploaded_file_name = response.data['filename']
+        # And same for other files
+        response = client.post(url, {'attachment_file': temp_file_2,}, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        uploaded_file_2 = response.data['filename']
 
-        # Post comment
-        # Values of 'attachments_ids' parameter are uploaded files id's
-        url = 'http://127.0.0.1:8000/helpdesk/api/tickets/1/comments.json?attachments_ids=[1,2]' 
+        response = client.post(url, {'attachment_file': temp_file_3,}, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        uploaded_file_3 = response.data['filename']
+
+        # Post first comment with attachment
+        url = 'http://127.0.0.1:8000/helpdesk/api/tickets/1/comments.json' 
         data = {
             'internal': 'true',
-            'body': 'test comment'
+            'body': 'test comment',
+            'attachments_ids': '1' # Attach one file
         }
         # Post comment
         response = client.post(url, data, format='multipart')
         # Check if created
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # Get comment's attachment filename
+        #if response.data['attachments']:
         comment_attachment_filename = response.data['attachments'][0]['attachment']['filename']
         # Check if it's the same file
-        self.assertEqual(uploaded_file_name, comment_attachment_filename)
+        self.assertEqual(uploaded_file_1, comment_attachment_filename)
+
+
+
+        # Next, let's create another comment with 2 files attached
+        # We'll use same data, only different attachments
+        data['attachments_ids'] = '2,3'
+        response = client.post(url, data, format='multipart')
+        # Check if created
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        
+        # Check if 2 attachments in response
+        self.assertEqual(len(response.data['attachments']), 2)
+
+        # Get comment's attachments filenames
+        if response.data['attachments']:
+            comment_attachment_filename = response.data['attachments'][0]['attachment']['filename']
+            self.assertEqual(uploaded_file_2, comment_attachment_filename)
+
+            comment_attachment_filename = response.data['attachments'][1]['attachment']['filename']
+            self.assertEqual(uploaded_file_3, comment_attachment_filename)
