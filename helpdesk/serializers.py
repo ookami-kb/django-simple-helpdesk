@@ -45,14 +45,6 @@ class CommentSerializer(serializers.ModelSerializer):
     """Comment serializer"""
     author = AssigneeSerializer(read_only=True)
     attachments = AttachmentSerializer(many=True, read_only=True)
-
-    #attachments_ids = serializers.ListField(
-    #    child=serializers.IntegerField(min_value=1),
-        #child = AttachmentFileSerializer(),
-    #    write_only=True,
-    #    required = False
-    #)
-
     attachments_ids = serializers.CharField(write_only=True)
 
     class Meta:
