@@ -109,7 +109,7 @@ class MailAttachment(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
-    attachment = models.OneToOneField(AttachmentFile, blank=True, null=True)
+    attachment = models.OneToOneField(AttachmentFile)
 
     def __str__(self):
         return self.attachment.filename if self.attachment else 'No attachment'
@@ -234,7 +234,7 @@ class Comment(models.Model):
     author = models.ForeignKey(User, blank=True, null=True, related_name='helpdesk_answers')
     internal = models.BooleanField(default=False, help_text='If checked this comment will not be emailed to client')
     notified = models.BooleanField(default=True, editable=False)
-    message_id = models.UUIDField(default=uuid.uuid1, editable=False)
+    message_id = models.CharField(max_length=255, unique=True, default=uuid.uuid1, editable=False)
     attachments = GenericRelation(MailAttachment)
 
     def is_from_client(self):
