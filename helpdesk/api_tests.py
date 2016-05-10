@@ -68,7 +68,10 @@ class APITests(APITestCase):
         # Check if it's the same file
         self.assertEqual(uploaded_file_1, comment_attachment_filename)
 
-
+        # Send request with the same file to be sure that
+        # app don't crash
+        response = client.post(url, data, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # Next, let's create another comment with 2 files attached
         # We'll use same data, only different attachments

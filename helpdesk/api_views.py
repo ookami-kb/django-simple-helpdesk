@@ -89,13 +89,20 @@ class CommentListView(ListCreateAPIView):
         )
         try:
             attachment_file = AttachmentFile.objects.get(pk=attachment_file_id)
+        except AttachmentFile.DoesNotExist:
+            return None
+
+        # Check if mail attachment with this file is already exists
+        try:
+            ma = attachment_file.mailattachment
+        except MailAttachment.DoesNotExist:
             attachment_obj = MailAttachment(
                 content_type = comment_ct,
                 object_id = comment_id,
                 attachment = attachment_file
             )
-        except AttachmentFile.DoesNotExist:
-            attachment_obj = None
+        else:
+            return None
 
         return attachment_obj
 
