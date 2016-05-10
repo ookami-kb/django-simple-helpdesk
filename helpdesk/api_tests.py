@@ -19,7 +19,7 @@ class APITests(APITestCase):
             customer = 'test@test.test',
             message_id = '1',
         )
-
+    
     def test_comment_post(self):
         """Comment posting test"""
         
@@ -41,22 +41,26 @@ class APITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # Remember uploaded files names
         uploaded_file_1 = response.data['filename']
+        file_id_1 = response.data['file_id']
+
         
         # And same for other files
         response = client.post(url, {'attachment_file': temp_file_2,}, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         uploaded_file_2 = response.data['filename']
+        file_id_2 = response.data['file_id']
 
         response = client.post(url, {'attachment_file': temp_file_3,}, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         uploaded_file_3 = response.data['filename']
+        file_id_3 = response.data['file_id']
 
         # Post first comment with attachment
         url = '/helpdesk/api/tickets/1/comments.json' 
         data = {
             'internal': 'true',
             'body': 'test comment',
-            'attachments_ids': '1' # Attach one file
+            'attachments_ids': [file_id_1] # Attach one file
         }
         # Post comment
         response = client.post(url, data, format='multipart')
@@ -75,7 +79,7 @@ class APITests(APITestCase):
 
         # Next, let's create another comment with 2 files attached
         # We'll use same data, only different attachments
-        data['attachments_ids'] = '2,3'
+        data['attachments_ids'] = [file_id_2, file_id_3]
         response = client.post(url, data, format='multipart')
         # Check if created
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
