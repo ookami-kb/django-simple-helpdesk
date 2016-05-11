@@ -1,9 +1,14 @@
 from django.db.models import Q
-from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView, ListCreateAPIView, CreateAPIView
 from rest_framework.pagination import PageNumberPagination
 
-from helpdesk.models import Ticket, State, Assignee
-from helpdesk.serializers import TicketListSerializer, StateSerializer, AssigneeSerializer, TicketDetailSerializer
+from helpdesk.models import Ticket, State, Assignee, Comment, MailAttachment, AttachmentFile
+from helpdesk.serializers import TicketListSerializer, StateSerializer,\
+    AssigneeSerializer, TicketDetailSerializer, CommentSerializer, AttachmentFileSerializer
+from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.parsers import FormParser, MultiPartParser
 
 
 class Pagination(PageNumberPagination):
@@ -66,3 +71,31 @@ class StateListView(ListAPIView):
 class AssigneeListView(ListAPIView):
     serializer_class = AssigneeSerializer
     queryset = Assignee.objects.all()
+
+
+class CommentListView(ListCreateAPIView):
+    """Comment list and create"""
+    serializer_class = CommentSerializer
+
+    def _get_ticket_object(self):
+        return get_object_or_404(Ticket, pk=self.kwargs['pk'])        
+
+    def get_queryset(self):
+        return Comment.objects.filter(ticket=self._get_ticket_object())
+
+    def get_serializer_context(self):
+        """Extra context provided to the serializer class"""
+        return {
+            'ticket': self._get_ticket_object(),
+            'request': self.request,
+            'view': self
+        }
+
+
+class AttachmentFileUploadView(CreateAPIView):
+    """Attachment file upload"""
+    serializer_class = AttachmentFileSerializer
+    parser_classes = (FormParser, MultiPartParser)
+
+    def perform_create(self, serializer):
+        serializer.save(attachment_file=self.request.data.get('attachment_file'))

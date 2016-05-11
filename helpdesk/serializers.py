@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from helpdesk.models import Ticket, State, Assignee, Comment
+from helpdesk.models import Ticket, State, Assignee, Comment, MailAttachment, AttachmentFile
+from django.contrib.contenttypes.models import ContentType
 
 
 class StateSerializer(serializers.ModelSerializer):
@@ -27,13 +28,63 @@ class TicketListSerializer(serializers.ModelSerializer):
                   'customer_name', 'assignee', 'assignee_id')
 
 
-class CommentSerializer(serializers.ModelSerializer):
-    author = AssigneeSerializer(read_only=True)
+class AttachmentFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AttachmentFile
+        fields = ('file_id', 'filename', 'signed_url')
 
+
+class AttachmentSerializer(serializers.ModelSerializer):
+    """Mail attachments serializer class"""
+    attachment = AttachmentFileSerializer()
+    class Meta:
+        model = MailAttachment
+        fields = ('id', 'attachment')
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    """Comment serializer"""
+    author = AssigneeSerializer(read_only=True)
+    attachments = AttachmentSerializer(many=True, read_only=True)
+    attachments_ids = serializers.ListField(
+        write_only=True,
+        required=False,
+        child=serializers.UUIDField(required=False),
+    )
+    
     class Meta:
         model = Comment
-        fields = ('id', 'created', 'body', 'author', 'internal', 'notified')
-        read_only_fields = ('created', 'author', 'notified')
+        read_only_fields = ('created', 'author', 'notified', 'ticket', 'attachments')
+    
+    def create(self, validated_data, **kwargs):
+        """Create Comment"""
+        ids = validated_data.pop('attachments_ids')
+        # Create comment
+        comment = Comment(**validated_data)
+        comment.author = self.context['request'].user
+        comment.ticket = self.context['ticket']
+        comment.save()
+
+        # Handle file attachments
+        if ids:
+            comment_ct = ContentType.objects.get(app_label='helpdesk', model='comment')
+            attachment_qs = AttachmentFile.objects.filter(file_id__in=ids).select_related()
+            attachments_list = []
+            for obj in attachment_qs:
+                # Check if mail attachment with this file exists
+                try:
+                    ma = obj.mailattachment
+                except MailAttachment.DoesNotExist:
+                    attachment_obj = MailAttachment(
+                        content_type = comment_ct,
+                        object_id = comment.id,
+                        attachment = obj
+                    )
+                    attachments_list.append(attachment_obj)
+
+            MailAttachment.objects.bulk_create(attachments_list)
+
+        return comment
 
 
 class TicketDetailSerializer(TicketListSerializer):
