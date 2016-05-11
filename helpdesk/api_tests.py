@@ -42,7 +42,6 @@ class APITests(APITestCase):
         # Remember uploaded files names
         uploaded_file_1 = response.data['filename']
         file_id_1 = response.data['file_id']
-
         
         # And same for other files
         response = client.post(url, {'attachment_file': temp_file_2,}, format='multipart')

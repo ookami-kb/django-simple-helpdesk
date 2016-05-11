@@ -17,21 +17,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='AttachmentFile',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
-                ('file_id', models.CharField(unique=True, max_length=255, default=uuid.uuid1, editable=False)),
-                ('attachment_file', models.FileField()),
+                ('id', models.AutoField(serialize=False, primary_key=True, verbose_name='ID', auto_created=True)),
+                ('file_id', models.UUIDField(default=uuid.uuid1, editable=False)),
+                ('attachment_file', models.FileField(storage=django.core.files.storage.FileSystemStorage(location='/home/avalas/projects/django-simple-helpdesk/attachments', base_url='/helpdesk/attachments/'), upload_to='tickets')),
             ],
         ),
-
         migrations.AlterField(
             model_name='comment',
             name='message_id',
-            field=models.CharField(unique=True, max_length=255, default=uuid.uuid1, editable=False),
-        ),
-        migrations.AlterField(
-            model_name='comment',
-            name='ticket',
-            field=models.ForeignKey(to='helpdesk.Ticket', related_name='comments'),
+            field=models.CharField(default=uuid.uuid1, editable=False, unique=True, max_length=255),
         ),
         migrations.AlterField(
             model_name='mailattachment',

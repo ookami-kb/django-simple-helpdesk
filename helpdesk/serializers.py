@@ -49,7 +49,7 @@ class CommentSerializer(serializers.ModelSerializer):
     attachments_ids = serializers.ListField(
         write_only=True,
         required=False,
-        child=serializers.CharField(required=False),
+        child=serializers.UUIDField(required=False),
     )
     
     class Meta:
