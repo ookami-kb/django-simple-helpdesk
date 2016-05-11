@@ -74,6 +74,7 @@ class AssigneeListView(ListAPIView):
 
 
 class CommentListView(ListCreateAPIView):
+    """Comment list and create"""
     serializer_class = CommentSerializer
 
     def _get_ticket_object(self):
@@ -83,12 +84,10 @@ class CommentListView(ListCreateAPIView):
         return Comment.objects.filter(ticket=self._get_ticket_object())
 
     def get_serializer_context(self):
-        """
-        Extra context provided to the serializer class.
-        """
+        """Extra context provided to the serializer class"""
         return {
-            'request': self.request, # request object is passed here
             'ticket': self._get_ticket_object(),
+            'request': self.request,
             'view': self
         }
 

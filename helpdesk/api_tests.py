@@ -77,6 +77,16 @@ class APITests(APITestCase):
         response = client.post(url, data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+        # Send empty list        
+        data['attachments_ids'] = []
+        response = client.post(url, data, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Send data without 'attacments_ids' key  
+        data.pop('attachments_ids', None)
+        response = client.post(url, data, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
         # Next, let's create another comment with 2 files attached
         # We'll use same data, only different attachments
         data['attachments_ids'] = [file_id_2, file_id_3]

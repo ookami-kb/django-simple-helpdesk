@@ -90,7 +90,6 @@ attachment_fs = FileSystemStorage(location=settings.BASE_DIR + '/attachments',
 
 
 class AttachmentFile(models.Model):
-
     file_id = models.CharField(max_length=255, unique=True,  default=uuid.uuid1, editable=False)
     attachment_file = models.FileField(upload_to='tickets', storage=attachment_fs)
     
@@ -105,6 +104,7 @@ class AttachmentFile(models.Model):
 
     def __str__(self):
         return self.filename
+
 
 class MailAttachment(models.Model):
     content_type = models.ForeignKey(ContentType)

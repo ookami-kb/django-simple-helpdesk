@@ -65,16 +65,13 @@ class CommentSerializer(serializers.ModelSerializer):
         comment.ticket = self.context['ticket']
         comment.save()
 
-        #Handle file attachments
+        # Handle file attachments
         if ids:
-            comment_ct = ContentType.objects.get(
-                        app_label='helpdesk', 
-                        model='comment'
-            )
-            attachment_qs = AttachmentFile.objects.filter(file_id__in=ids)
+            comment_ct = ContentType.objects.get(app_label='helpdesk', model='comment')
+            attachment_qs = AttachmentFile.objects.filter(file_id__in=ids).select_related()
             attachments_list = []
-            # Check if mail attachment with this file exists
             for obj in attachment_qs:
+                # Check if mail attachment with this file exists
                 try:
                     ma = obj.mailattachment
                 except MailAttachment.DoesNotExist:
@@ -84,10 +81,11 @@ class CommentSerializer(serializers.ModelSerializer):
                         attachment = obj
                     )
                     attachments_list.append(attachment_obj)
-            
+
             MailAttachment.objects.bulk_create(attachments_list)
 
         return comment
+
 
 class TicketDetailSerializer(TicketListSerializer):
     comments = CommentSerializer(many=True, read_only=True)
